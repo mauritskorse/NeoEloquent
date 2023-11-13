@@ -858,7 +858,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * @param string $otherKey
      * @param string $relation
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Vinelab\NeoEloquent\Eloquent\Relations\BelongsTo
      */
     public function belongsTo($related, $foreignKey = null, $otherKey = null, $relation = null)
     {
@@ -898,7 +898,7 @@ abstract class Model implements ArrayAccess, Arrayable, Jsonable, JsonSerializab
      * @param string $foreignKey
      * @param string $localKey
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Vinelab\NeoEloquent\Eloquent\Relations\HasOne
      */
     public function hasOne($related, $foreignKey = null, $otherKey = null, $relation = null)
     {
