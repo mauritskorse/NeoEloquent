@@ -8,3 +8,5 @@ composer.lock
 Examples/**/vendor
 
 .phpunit.result.cache
+Todo.md
+settings.json
