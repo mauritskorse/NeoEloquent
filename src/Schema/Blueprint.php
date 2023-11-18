@@ -25,13 +25,13 @@ class Blueprint
 
     /**
      * @param string  $label
-     * @param Closure $callback
+     * @param \Closure $callback
      */
     public function __construct($label, Closure $callback = null)
     {
         $this->label = $label;
 
-        if (!is_null($callback)) {
+        if (! is_null($callback)) {
             $callback($this);
         }
     }
@@ -39,8 +39,8 @@ class Blueprint
     /**
      * Execute the blueprint against the label.
      *
-     * @param \Illuminate\Database\ConnectionInterface     $connection
-     * @param \Illuminate\Database\Schema\Grammars\Grammar $grammar
+     * @param ConnectionInterface     $connection
+     * @param Grammar $grammar
      */
     public function build(ConnectionInterface $connection, IlluminateSchemaGrammar $grammar)
     {
@@ -52,8 +52,8 @@ class Blueprint
     /**
      * Get the raw Cypher statements for the blueprint.
      *
-     * @param \Illuminate\Database\ConnectionInterface     $connection
-     * @param \Illuminate\Database\Schema\Grammars\Grammar $grammar
+     * @param ConnectionInterface     $connection
+     * @param Grammar $grammar
      *
      * @return array
      */
@@ -65,10 +65,10 @@ class Blueprint
         // grammar which is used to build the necessary SQL statements to build
         // the blueprint element, so we'll just call that compilers function.
         foreach ($this->commands as $command) {
-            $method = 'compile'.ucfirst($command->name);
+            $method = 'compile' . ucfirst($command->name);
 
             if (method_exists($grammar, $method)) {
-                if (!is_null($cypher = $grammar->$method($this, $command, $connection))) {
+                if (! is_null($cypher = $grammar->$method($this, $command, $connection))) {
                     $statements = array_merge($statements, (array) $cypher);
                 }
             }

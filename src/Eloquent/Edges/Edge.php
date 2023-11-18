@@ -6,7 +6,7 @@ use DateTime;
 use Carbon\Carbon;
 use GraphAware\Neo4j\Client\Formatter\Result;
 use GraphAware\Common\Result\RecordViewInterface;
-use GraphAware\Bolt\Result\Type\Relationship;
+//use GraphAware\Bolt\Result\Type\Relationship;
 use Laudis\Neo4j\Types\CypherMap;
 use Laudis\Neo4j\Types\Node;
 use Vinelab\NeoEloquent\Eloquent\Model;
@@ -14,6 +14,7 @@ use Vinelab\NeoEloquent\Eloquent\Builder;
 use Vinelab\NeoEloquent\Eloquent\Collection;
 use Vinelab\NeoEloquent\Exceptions\NoEdgeDirectionException;
 use Vinelab\NeoEloquent\Traits\ResultTrait;
+use Laudis\Neo4j\Types\Relationship;
 
 abstract class Edge extends Delegate
 {
@@ -22,7 +23,7 @@ abstract class Edge extends Delegate
     /**
      * The edges finder instance.
      *
-     * @var \Vinelab\NeoEloquent\Eloquent\Edges\Finder
+     * @var Finder
      */
     protected $finder;
 
@@ -42,14 +43,14 @@ abstract class Edge extends Delegate
     /**
      * The left side Model of the relationship.
      *
-     * @var \Vinelab\NeoEloquent\Eloquent\Model
+     * @var Model
      */
     protected $parent;
 
     /**
      * The right side Model of the relationship.
      *
-     * @var \Vinelab\NeoEloquent\Eloquent\Model
+     * @var Model
      */
     protected $related;
 
@@ -94,7 +95,7 @@ abstract class Edge extends Delegate
     /**
      * The relationship instance.
      *
-     * @var \Laudis\Neo4j\Types\Relationship
+     * @var Relationship
      */
     protected $relation;
 
@@ -130,9 +131,9 @@ abstract class Edge extends Delegate
     /**
      * Create a new Relation instance.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Builder $query
-     * @param \Vinelab\NeoEloquent\Eloquent\Model   $parent
-     * @param \Vinelab\NeoEloquent\Eloquent\Model   $related
+     * @param Builder $query
+     * @param Model   $parent
+     * @param Model   $related
      * @param string                                $type
      */
     public function __construct(Builder $query, Model $parent, Model $related, $type, $attributes = array(), $unique = false)
@@ -153,7 +154,7 @@ abstract class Edge extends Delegate
      * Initialize the relationship setting the start node,
      * end node and relation type.
      *
-     * @throws \Vinelab\NeoEloquent\Exceptions\NoEdgeDirectionException If $direction is not set on the inheriting relation.
+     * @throws NoEdgeDirectionException If $direction is not set on the inheriting relation.
      */
     public function initRelation()
     {
@@ -182,7 +183,7 @@ abstract class Edge extends Delegate
 
             default:
                 throw new NoEdgeDirectionException();
-            break;
+                break;
         }
     }
 
@@ -190,13 +191,13 @@ abstract class Edge extends Delegate
      * Get the direct relationship between
      * the currently set models ($parent and $related).
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edge[In|Out]
+     * @return Edge[In|Out]
      */
     public function current()
     {
         $results = $this->finder->firstRelationWithNodes($this->parent, $this->related, $this->type, $this->direction);
 
-        return !$results->isEmpty() ? $this->newFromRelation($results->first()) : null;
+        return ! $results->isEmpty() ? $this->newFromRelation($results->first()) : null;
     }
 
     /**
@@ -208,16 +209,16 @@ abstract class Edge extends Delegate
     {
         $this->updateTimestamps();
 
-         /*
+        /*
          * If this is a unique relationship we should check for an existing
          * one of the same type and direction for the $parent node before saving
          * and delete it, unless we are updating an existing relationship.
          */
-        if ($this->unique && !$this->exists()) {
+        if ($this->unique && ! $this->exists()) {
             $endModel = $this->related->newInstance();
             $existing = $this->firstRelationWithNodes($this->parent, $endModel, $this->type, $this->direction);
 
-            if(!$existing->isEmpty()) {
+            if (! $existing->isEmpty()) {
                 $instance = $this->newFromRelation($existing->first());
                 $instance->delete();
             }
@@ -236,7 +237,7 @@ abstract class Edge extends Delegate
             return true;
         }
 
-        return  false;
+        return false;
     }
 
     /**
@@ -245,7 +246,7 @@ abstract class Edge extends Delegate
      * @param Model $end
      * @param array $properties
      */
-    public function saveRelationship($type, $start, $end, $properties): CypherMap
+    public function saveRelationship($type, $start, $end, $properties) : CypherMap
     {
         $grammar = $this->query->getQuery()->getGrammar();
         $attributes = $this->getRelationshipAttributes($start, $end, $properties);
@@ -292,7 +293,7 @@ abstract class Edge extends Delegate
      * Create a new Relation of the current instance
      * from an existing database relation.
      *
-     * @param \GraphAware\Neo4j\Client\Formatter\Result $results
+     * @param CypherMap $record
      *
      * @return static
      */
@@ -308,7 +309,7 @@ abstract class Edge extends Delegate
     /**
      * Get the Neo4j relationship object.
      *
-     * @return \Everyman\Neo4j\Relationship
+     * @return Relationship
      */
     public function getReal()
     {
@@ -362,7 +363,7 @@ abstract class Edge extends Delegate
         $this->related = $this->related->newFromBuilder($attributes);
         $this->related->setConnection($this->related->getConnectionName());
 
-//        $this->start = $relation->getStartNode();
+        //        $this->start = $relation->getStartNode();
 //        $this->end = $relation->getEndNode();
 //
 //        // Instantiate and fill out the related model.
@@ -379,7 +380,7 @@ abstract class Edge extends Delegate
      *
      * @param array $attributes
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In|Out]|static
+     * @return Edge[In|Out]|static
      */
     public function fill(array $properties)
     {
@@ -462,7 +463,7 @@ abstract class Edge extends Delegate
     /**
      * Get the Models of this relation.
      *
-     * @return \Illuminate\Database\Collection
+     * @return Collection
      */
     public function getModels()
     {
@@ -473,7 +474,7 @@ abstract class Edge extends Delegate
      * Just a convenient method to get
      * the parent model of this relation.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Model
+     * @return Model
      */
     public function parent()
     {
@@ -483,7 +484,7 @@ abstract class Edge extends Delegate
     /**
      * Get the parent model of this relation.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Model
+     * @return Model
      */
     public function getParent()
     {
@@ -494,7 +495,7 @@ abstract class Edge extends Delegate
      * Just a convenient function to get
      * the related Model of this relation.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Model
+     * @return Model
      */
     public function related()
     {
@@ -504,7 +505,7 @@ abstract class Edge extends Delegate
     /**
      * Get the parent model of this relation.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Model
+     * @return Model
      */
     public function getRelated()
     {
@@ -514,7 +515,7 @@ abstract class Edge extends Delegate
     /**
      * Get the Nodes of this relation.
      *
-     * @return \Illuminate\Database\Collection
+     * @return Collection
      */
     public function getNodes()
     {
@@ -560,7 +561,7 @@ abstract class Edge extends Delegate
     /**
      * Convert a DateTime to a storable string.
      *
-     * @param \DateTime|int $value
+     * @param DateTime|int $value
      *
      * @return string
      */
@@ -592,7 +593,7 @@ abstract class Edge extends Delegate
         // If this value is some other type of string, we'll create the DateTime with
         // the format used by the database connection. Once we get the instance we
         // can return back the finally formatted DateTime instances to the devs.
-        elseif (!$value instanceof DateTime) {
+        elseif (! $value instanceof DateTime) {
             $value = Carbon::createFromFormat($format, $value);
         }
 
@@ -625,7 +626,7 @@ abstract class Edge extends Delegate
         // Finally, we will just assume this date is in the format used by default on
         // the database connection and use that format to create the Carbon object
         // that is returned back out to the developers after we convert it here.
-        elseif (!$value instanceof DateTime) {
+        elseif (! $value instanceof DateTime) {
             $format = $this->getDateFormat();
 
             return Carbon::createFromFormat($format, $value);
@@ -674,7 +675,7 @@ abstract class Edge extends Delegate
 
             $this->setUpdatedAt($time);
 
-            if (!$this->exists()) {
+            if (! $this->exists()) {
                 $this->setCreatedAt($time);
             }
         }

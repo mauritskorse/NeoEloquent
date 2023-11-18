@@ -12,7 +12,7 @@ use Laudis\Neo4j\Types\CypherList;
 use Laudis\Neo4j\Types\Node;
 use Vinelab\NeoEloquent\ConnectionInterface;
 use Vinelab\NeoEloquent\Eloquent\Collection;
-use Vinelab\NeoEloquent\Query\Grammars\Grammar;
+use Vinelab\NeoEloquent\Query\Grammars\CypherGrammar;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
@@ -42,14 +42,14 @@ class Builder
     /**
      * The database query grammar instance.
      *
-     * @var \Vinelab\NeoEloquent\Query\Grammars\Grammar
+     * @var CypherGrammar
      */
-    protected $grammar;
+    protected CypherGrammar $grammar;
 
     /**
      * The database query post processor instance.
      *
-     * @var \Vinelab\NeoEloquent\Query\Processors\Processor
+     * @var Processor
      */
     protected $processor;
 
@@ -217,7 +217,7 @@ class Builder
     /**
      * Create a new query builder instance.
      */
-    public function __construct(ConnectionInterface $connection, Grammar $grammar)
+    public function __construct(ConnectionInterface $connection, CypherGrammar $grammar)
     {
         $this->grammar = $grammar;
         $this->grammar->setQuery($this);
@@ -247,7 +247,7 @@ class Builder
      * @param string $expression
      * @param array  $bindings
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function selectRaw($expression, array $bindings = [])
     {
@@ -263,10 +263,10 @@ class Builder
     /**
      * Add a subselect expression to the query.
      *
-     * @param \Closure|\Vinelab\NeoEloquent\Query\Builder|string $query
+     * @param \Closure|Builder|string $query
      * @param string                                             $as
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function selectSub($query, $as)
     {
@@ -286,7 +286,7 @@ class Builder
             throw new InvalidArgumentException();
         }
 
-        return $this->selectRaw('('.$query.') as '.$this->grammar->wrap($as), $bindings);
+        return $this->selectRaw('(' . $query . ') as ' . $this->grammar->wrap($as), $bindings);
     }
 
     /**
@@ -322,7 +322,7 @@ class Builder
      *
      * @param string $label
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function from($label)
     {
@@ -406,7 +406,7 @@ class Builder
         // We will run through all the bindings and pluck out
         // the component (select, where, etc.)
         foreach ($this->bindings as $component => $binding) {
-            if (!empty($binding)) {
+            if (! empty($binding)) {
                 // For every binding there could be multiple
                 // values set so we need to add all of them as
                 // flat $key => $value item in our $bindings.
@@ -427,7 +427,7 @@ class Builder
      * @param mixed  $value
      * @param string $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      *
      * @throws \InvalidArgumentException
      */
@@ -466,7 +466,7 @@ class Builder
         // If the given operator is not found in the list of valid operators we will
         // assume that the developer is just short-cutting the '=' operators and
         // we will set the operators to '=' and set the values appropriately.
-        if (!in_array(mb_strtolower($operator), $this->operators, true)) {
+        if (! in_array(mb_strtolower($operator), $this->operators, true)) {
             [$value, $operator] = array($operator, '=');
         }
 
@@ -494,7 +494,7 @@ class Builder
         // When the column is an id we need to treat it as a graph db id and transform it
         // into the form of id(n) and the typecast the value into int.
         if ($column == 'id') {
-            $column = 'id('.$this->modelAsNode().')';
+            $column = 'id(' . $this->modelAsNode() . ')';
             $value = intval($value);
         }
         // When it's been already passed in the form of NodeLabel.id we'll have to
@@ -515,7 +515,7 @@ class Builder
 
         $property = $this->wrap($binding);
 
-        if (!$value instanceof Expression) {
+        if (! $value instanceof Expression) {
             $this->addBinding([$property => $value], 'where');
         }
 
@@ -529,7 +529,7 @@ class Builder
      * @param string $operator
      * @param mixed  $value
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orWhere($column, $operator = null, $value = null)
     {
@@ -577,7 +577,7 @@ class Builder
      * @param string $sql
      * @param array  $bindings
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orWhereRaw($sql, array $bindings = [])
     {
@@ -591,7 +591,7 @@ class Builder
      * @param array  $values
      * @param string $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereNotBetween($column, array $values, $boolean = 'and')
     {
@@ -604,7 +604,7 @@ class Builder
      * @param string $column
      * @param array  $values
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orWhereNotBetween($column, array $values)
     {
@@ -617,7 +617,7 @@ class Builder
      * @param \Closure $callback
      * @param string   $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereNested(Closure $callback, $boolean = 'and')
     {
@@ -636,7 +636,7 @@ class Builder
     /**
      * Add another query builder as a nested where to the query builder.
      *
-     * @param \Vinelab\NeoEloquent\Query\Builder|static $query
+     * @param Builder|static $query
      * @param string                                    $boolean
      *
      * @return $this
@@ -670,7 +670,7 @@ class Builder
      * @param string $column
      * @param array  $values
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orWhereBetween($column, array $values)
     {
@@ -738,7 +738,7 @@ class Builder
      * @param \Closure $callback
      * @param bool     $not
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orWhereExists(Closure $callback, $not = false)
     {
@@ -751,7 +751,7 @@ class Builder
      * @param \Closure $callback
      * @param string   $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereNotExists(Closure $callback, $boolean = 'and')
     {
@@ -763,7 +763,7 @@ class Builder
      *
      * @param \Closure $callback
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orWhereNotExists(Closure $callback)
     {
@@ -776,7 +776,7 @@ class Builder
      * @param string $column
      * @param mixed  $values
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orWhereIn($column, $values)
     {
@@ -790,7 +790,7 @@ class Builder
      * @param mixed  $values
      * @param string $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereNotIn($column, $values, $boolean = 'and')
     {
@@ -803,7 +803,7 @@ class Builder
      * @param string $column
      * @param mixed  $values
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orWhereNotIn($column, $values)
     {
@@ -841,7 +841,7 @@ class Builder
      *
      * @param string $column
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orWhereNull($column)
     {
@@ -854,7 +854,7 @@ class Builder
      * @param string $column
      * @param string $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereNotNull($column, $boolean = 'and')
     {
@@ -866,7 +866,7 @@ class Builder
      *
      * @param string $column
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orWhereNotNull($column)
     {
@@ -885,7 +885,7 @@ class Builder
     {
         $count = $this->columnCountForWhereClause($column);
 
-        $binding = ($count > 0) ? $column.'_'.($count + 1) : $column;
+        $binding = ($count > 0) ? $column . '_' . ($count + 1) : $column;
 
         $prefix = $this->from;
         if (is_array($prefix)) {
@@ -893,9 +893,9 @@ class Builder
         }
 
         // we prefix when we do have a prefix ($this->from) and when the column isn't an id (id(abc..)).
-        $prefix = (!preg_match('/id([a-zA-Z0-9]?)/', $column) && !empty($this->from)) ? mb_strtolower($prefix) : '';
+        $prefix = (! preg_match('/id([a-zA-Z0-9]?)/', $column) && ! empty($this->from)) ? mb_strtolower($prefix) : '';
 
-        return $prefix.$binding;
+        return $prefix . $binding;
     }
 
     /**
@@ -906,7 +906,7 @@ class Builder
      * @param int    $value
      * @param string $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereDate($column, $operator, $value, $boolean = 'and')
     {
@@ -921,7 +921,7 @@ class Builder
      * @param int    $value
      * @param string $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereDay($column, $operator, $value, $boolean = 'and')
     {
@@ -936,7 +936,7 @@ class Builder
      * @param int    $value
      * @param string $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereMonth($column, $operator, $value, $boolean = 'and')
     {
@@ -951,7 +951,7 @@ class Builder
      * @param int    $value
      * @param string $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereYear($column, $operator, $value, $boolean = 'and')
     {
@@ -1070,7 +1070,7 @@ class Builder
 
         $this->havings[] = compact('type', 'column', 'operator', 'value', 'boolean');
 
-        if (!$value instanceof Expression) {
+        if (! $value instanceof Expression) {
             $this->addBinding($value, 'having');
         }
 
@@ -1084,7 +1084,7 @@ class Builder
      * @param string $operator
      * @param string $value
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orHaving($column, $operator = null, $value = null)
     {
@@ -1117,7 +1117,7 @@ class Builder
      * @param string $sql
      * @param array  $bindings
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function orHavingRaw($sql, array $bindings = [])
     {
@@ -1147,7 +1147,7 @@ class Builder
      *
      * @param string $column
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function latest($column = 'created_at')
     {
@@ -1159,7 +1159,7 @@ class Builder
      *
      * @param string $column
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function oldest($column = 'created_at')
     {
@@ -1208,7 +1208,7 @@ class Builder
      *
      * @param int $value
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function skip($value)
     {
@@ -1238,7 +1238,7 @@ class Builder
      *
      * @param int $value
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function take($value)
     {
@@ -1251,7 +1251,7 @@ class Builder
      * @param int $page
      * @param int $perPage
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function forPage($page, $perPage = 15)
     {
@@ -1261,10 +1261,10 @@ class Builder
     /**
      * Add a union statement to the query.
      *
-     * @param \Vinelab\NeoEloquent\Query\Builder|\Closure $query
+     * @param Builder|\Closure $query
      * @param bool                                        $all
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function union($query, $all = false)
     {
@@ -1282,9 +1282,9 @@ class Builder
     /**
      * Add a union all statement to the query.
      *
-     * @param \Vinelab\NeoEloquent\Query\Builder|\Closure $query
+     * @param Builder|\Closure $query
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function unionAll($query)
     {
@@ -1308,7 +1308,7 @@ class Builder
     /**
      * Lock the selected rows in the table for updating.
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder
+     * @return Builder
      */
     public function lockForUpdate()
     {
@@ -1318,7 +1318,7 @@ class Builder
     /**
      * Share lock the selected rows in the table.
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder
+     * @return Builder
      */
     public function sharedLock()
     {
@@ -1610,7 +1610,7 @@ class Builder
      */
     public function count($columns = '*')
     {
-        if (!is_array($columns)) {
+        if (! is_array($columns)) {
             $columns = [$columns];
         }
 
@@ -1715,7 +1715,7 @@ class Builder
         // If an ID is passed to the method, we will set the where clause to check
         // the ID to allow developers to simply and quickly remove a single row
         // from their database without manually specifying the where clauses.
-        if (!is_null($id)) {
+        if (! is_null($id)) {
             $this->where('id', '=', $id);
         }
 
@@ -1744,7 +1744,7 @@ class Builder
     protected function cleanBindings(array $bindings)
     {
         return array_values(array_filter($bindings, function ($binding) {
-            return !$binding instanceof Expression;
+            return ! $binding instanceof Expression;
         }));
     }
 
@@ -1753,7 +1753,7 @@ class Builder
      *
      * @param mixed $value
      *
-     * @return \Vinelab\NeoEloquent\Query\Expression
+     * @return Expression
      */
     public function raw($value)
     {
@@ -1782,7 +1782,7 @@ class Builder
      */
     public function setBindings(array $bindings, $type = 'where')
     {
-        if (!array_key_exists($type, $this->bindings)) {
+        if (! array_key_exists($type, $this->bindings)) {
             throw new InvalidArgumentException("Invalid binding type: {$type}.");
         }
 
@@ -1794,7 +1794,7 @@ class Builder
     /**
      * Merge an array of bindings into our bindings.
      *
-     * @param \Vinelab\NeoEloquent\Query\Builder $query
+     * @param Builder $query
      *
      * @return $this
      */
@@ -1808,7 +1808,7 @@ class Builder
     /**
      * Get the database connection instance.
      *
-     * @return \Illuminate\Database\ConnectionInterface
+     * @return ConnectionInterface
      */
     public function getConnection()
     {
@@ -1818,7 +1818,7 @@ class Builder
     /**
      * Get the database query processor instance.
      *
-     * @return \Vinelab\NeoEloquent\Query\Processors\Processor
+     * @return Processor
      */
     public function getProcessor()
     {
@@ -1828,7 +1828,7 @@ class Builder
     /**
      * Get the query grammar instance.
      *
-     * @return \Vinelab\NeoEloquent\Query\Grammars\Grammar
+     * @return CypherGrammar
      */
     public function getGrammar()
     {
@@ -1859,7 +1859,7 @@ class Builder
      * @param string $boolean
      * @param bool   $not
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereIn($column, $values, $boolean = 'and', $not = false)
     {
@@ -1879,7 +1879,7 @@ class Builder
         $property = $column;
 
         if ($column == 'id') {
-            $column = 'id('.$this->modelAsNode().')';
+            $column = 'id(' . $this->modelAsNode() . ')';
         }
 
         $this->wheres[] = compact('type', 'column', 'values', 'boolean');
@@ -1899,7 +1899,7 @@ class Builder
      * @param string $boolean
      * @param bool   $not
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereBetween($column, array $values, $boolean = 'and', $not = false)
     {
@@ -1908,7 +1908,7 @@ class Builder
         $property = $column;
 
         if ($column == 'id') {
-            $column = 'id('.$this->modelAsNode().')';
+            $column = 'id(' . $this->modelAsNode() . ')';
         }
 
         $this->wheres[] = compact('column', 'type', 'boolean', 'not');
@@ -1925,14 +1925,14 @@ class Builder
      * @param string $boolean
      * @param bool   $not
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereNull($column, $boolean = 'and', $not = false)
     {
         $type = $not ? 'NotNull' : 'Null';
 
         if ($column == 'id') {
-            $column = 'id('.$this->modelAsNode().')';
+            $column = 'id(' . $this->modelAsNode() . ')';
         }
 
         $binding = $this->prepareBindingColumn($column);
@@ -1950,7 +1950,7 @@ class Builder
      * @param string $value
      * @param string $boolean
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function whereCarried($column, $operator = null, $value = null, $boolean = 'and')
     {
@@ -1966,19 +1966,19 @@ class Builder
      *
      * @param array $parts
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function with(array $parts)
     {
-        if($this->isAssocArray($parts)) {
+        if ($this->isAssocArray($parts)) {
             foreach ($parts as $key => $part) {
-                if (!in_array($part, $this->with)) {
+                if (! in_array($part, $this->with)) {
                     $this->with[$key] = $part;
                 }
             }
         } else {
             foreach ($parts as $part) {
-                if (!in_array($part, $this->with)) {
+                if (! in_array($part, $this->with)) {
                     $this->with[] = $part;
                 }
             }
@@ -1999,7 +1999,7 @@ class Builder
         // Since every insert gets treated like a batch insert, we will make sure the
         // bindings are structured in a way that is convenient for building these
         // inserts statements by verifying the elements are actually an array.
-        if (!is_array(reset($values))) {
+        if (! is_array(reset($values))) {
             $values = array($values);
         }
 
@@ -2032,7 +2032,7 @@ class Builder
 
         $results = $this->connection->insert($cypher, $bindings);
 
-        return !!$results;
+        return ! ! $results;
     }
 
     /**
@@ -2041,7 +2041,7 @@ class Builder
      * @param array $model
      * @param array $related
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Model
+     * @return Model
      */
     public function createWith(array $model, array $related)
     {
@@ -2090,8 +2090,8 @@ class Builder
     /**
      * Add a relationship MATCH clause to the query.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $parent       The parent model of the relationship
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $related      The related model
+     * @param Model $parent       The parent model of the relationship
+     * @param Model $related      The related model
      * @param string                              $relatedNode  The related node' placeholder
      * @param string                              $relationship The relationship title
      * @param string                              $property     The parent's property we are matching against
@@ -2099,7 +2099,7 @@ class Builder
      * @param string                              $direction    Possible values are in, out and in-out
      * @param string                              $boolean      And, or operators
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder|static
+     * @return Builder|static
      */
     public function matchRelation($parent, $related, $relatedNode, $relationship, $property, $value = null, $direction = 'out', $boolean = 'and')
     {
@@ -2208,7 +2208,7 @@ class Builder
      *
      * @param string $column
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function collect($column)
     {
@@ -2246,8 +2246,8 @@ class Builder
     public function aggregate($function, $columns = array('*'), $percentile = null)
     {
         $this->aggregate = array_merge([
-                                           'label' => $this->from,
-                                       ], compact('function', 'columns', 'percentile'));
+            'label' => $this->from,
+        ], compact('function', 'columns', 'percentile'));
 
         $previousColumns = $this->columns;
 
@@ -2263,7 +2263,7 @@ class Builder
         $values = $this->getRecordsByPlaceholders($results);
 
         $value = reset($values);
-        if(is_array($value)) {
+        if (is_array($value)) {
             return current($value);
         } else {
             return $value;
@@ -2276,7 +2276,7 @@ class Builder
      * @param mixed  $value
      * @param string $type
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder
+     * @return Builder
      */
     public function addBinding($value, $type = 'where')
     {
@@ -2291,7 +2291,7 @@ class Builder
             }
         }
 
-        if (!array_key_exists($type, $this->bindings)) {
+        if (! array_key_exists($type, $this->bindings)) {
             throw new \InvalidArgumentException("Invalid binding type: {$type}.");
         }
 
@@ -2330,7 +2330,7 @@ class Builder
      */
     public function modelAsNode(array $labels = null)
     {
-        $labels = (!is_null($labels)) ? $labels : $this->from;
+        $labels = (! is_null($labels)) ? $labels : $this->from;
 
         return $this->grammar->modelAsNode($labels);
     }
@@ -2356,7 +2356,7 @@ class Builder
     /**
      * Get a new instance of the query builder.
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder
+     * @return Builder
      */
     public function newQuery()
     {

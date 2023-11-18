@@ -9,7 +9,7 @@ class Processor
     /**
      * Process the results of a "select" query.
      *
-     * @param \Vinelab\NeoEloquent\Query\Builder $query
+     * @param Builder $query
      * @param array                              $results
      *
      * @return array
@@ -22,7 +22,7 @@ class Processor
     /**
      * Process an  "insert get ID" query.
      *
-     * @param \Vinelab\NeoEloquent\Query\Builder $query
+     * @param Builder $query
      * @param string                             $cypher
      * @param array                              $values
      * @param string                             $sequence

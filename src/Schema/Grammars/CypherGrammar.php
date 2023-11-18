@@ -20,7 +20,7 @@ class CypherGrammar extends Grammar
         $match = $this->compileFrom($blueprint);
         $label = $this->prepareLabels(array($blueprint));
 
-        return $match.' REMOVE n'.$label;
+        return $match . ' REMOVE n' . $label;
     }
 
     /**
@@ -47,7 +47,7 @@ class CypherGrammar extends Grammar
     {
         $match = $this->compileFrom($label);
 
-        return $match.'  RETURN n LIMIT 1;';
+        return $match . '  RETURN n LIMIT 1;';
     }
 
     /**
@@ -78,7 +78,7 @@ class CypherGrammar extends Grammar
         $from = $this->prepareLabels(array($blueprint));
         $to = $this->prepareLabels(array($command->to));
 
-        return $match." REMOVE n$from SET n$to";
+        return $match . " REMOVE n$from SET n$to";
     }
 
     /**
@@ -185,10 +185,10 @@ class CypherGrammar extends Grammar
 
         // every label must begin with a ':' so we need to check
         // and reformat if need be.
-        $labels = ':'.preg_replace('/^:/', '', $labels);
+        $labels = ':' . preg_replace('/^:/', '', $labels);
 
         // now we add the default placeholder for this node
-        $labels = $this->modelAsNode().$labels;
+        $labels = $this->modelAsNode() . $labels;
 
         return sprintf('MATCH (%s)', $labels);
     }

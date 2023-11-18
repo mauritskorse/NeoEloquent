@@ -9,8 +9,8 @@ use Illuminate\Support\Str;
 class MigrationCreator extends IlluminateMigrationCreator
 {
     /**
-     * @param  string       $stub
-     * @param  null|string  $table
+     * @param string       $stub
+     * @param null|string  $table
      *
      * @return string
      */
@@ -40,15 +40,15 @@ class MigrationCreator extends IlluminateMigrationCreator
         if ($table === null) {
             $stub = $this->files->exists(path: "$customPath/blank.stub")
                 ? $customPath
-                : $this->stubPath().'/blank.stub';
+                : $this->stubPath() . '/blank.stub';
         } elseif ($create) {
             $stub = $this->files->exists(path: "$customPath/create.stub")
                 ? $customPath
-                : $this->stubPath().'/create.stub';
+                : $this->stubPath() . '/create.stub';
         } else {
             $stub = $this->files->exists(path: "$customPath/update.stub")
                 ? $customPath
-                : $this->stubPath().'/update.stub';
+                : $this->stubPath() . '/update.stub';
         }
 
         return $this->files->get($stub);
@@ -84,6 +84,6 @@ class MigrationCreator extends IlluminateMigrationCreator
      */
     public function stubPath()
     {
-        return __DIR__.'/stubs';
+        return __DIR__ . '/stubs';
     }
 }

@@ -48,21 +48,21 @@ class Connection implements ConnectionInterface
     /**
      * The query grammar implementation.
      *
-     * @var \Illuminate\Database\Query\Grammars\Grammar
+     * @var CypherGrammar
      */
     protected $queryGrammar;
 
     /**
      * The schema grammar implementation.
      *
-     * @var \Illuminate\Database\Schema\Grammars\Grammar
+     * @var CypherGrammar
      */
     protected $schemaGrammar;
 
     /**
      * The query post processor implementation.
      *
-     * @var \Illuminate\Database\Query\Processors\Processor
+     * @var Processor
      */
     protected $postProcessor;
 
@@ -162,7 +162,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the query grammar used by the connection.
      *
-     * @param \Illuminate\Database\Query\Grammars\Grammar $grammar
+     * @param CypherGrammar $grammar
      */
     public function setQueryGrammar(Grammar $grammar)
     {
@@ -196,7 +196,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the query post processor used by the connection.
      *
-     * @return \Illuminate\Database\Query\Processors\Processor
+     * @return Processor
      */
     public function getPostProcessor()
     {
@@ -206,7 +206,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the query post processor used by the connection.
      *
-     * @param \Illuminate\Database\Query\Processors\Processor $processor
+     * @param Processor $processor
      */
     public function setPostProcessor(Processor $processor)
     {
@@ -226,9 +226,9 @@ class Connection implements ConnectionInterface
     /**
      * Get the default post processor instance.
      *
-     * @return \Illuminate\Database\Query\Processors\Processor
+     * @return Processor
      */
-    protected function getDefaultPostProcessor()
+    public function getDefaultPostProcessor()
     {
         return new Processor();
     }
@@ -247,7 +247,7 @@ class Connection implements ConnectionInterface
     //  * Get the default fetch mode for the connection.
     //  *
     //  * @return int
-
+    //
     // public function getFetchMode()
     // {
     //     return $this->fetchMode;
@@ -297,17 +297,18 @@ class Connection implements ConnectionInterface
         return $this->loggingQueries;
     }
 
-    /**
-     * Set the default fetch mode for the connection.
-     *
-     * @param int $fetchMode
-     *
-     * @return int
-     */
-    public function setFetchMode($fetchMode)
-    {
-        $this->fetchMode = $fetchMode;
-    }
+    // /**
+    //  * Set the default fetch mode for the connection.
+    //  *
+    //  * @param int $fetchMode
+    //  *
+    //  * @return int
+    //  */
+    // public function setFetchMode($fetchMode)
+    // {
+    //     $this->fetchMode = $fetchMode;
+    // }
+
 
     /**
      * Set the event dispatcher instance on the connection.
@@ -324,7 +325,7 @@ class Connection implements ConnectionInterface
      *
      * @param mixed $value
      *
-     * @return \Illuminate\Database\Query\Expression
+     * @return Expression
      */
     public function raw($value)
     {
@@ -352,11 +353,11 @@ class Connection implements ConnectionInterface
      * @param string $query
      * @param array  $bindings
      *
-     * @return array
+     * @return SummarizedResult
      */
     public function selectFromWriteConnection($query, $bindings = [])
     {
-        return $this->select($query, $bindings, false);
+        return $this->select($query, $bindings);
     }
 
     public function createConnection()
@@ -376,7 +377,7 @@ class Connection implements ConnectionInterface
             ->build();
     }
 
-    private function initBuilder(): ClientBuilder
+    private function initBuilder() : ClientBuilder
     {
         $formatter = new SummarizedResultFormatter(OGMFormatter::create());
         return ClientBuilder::create()->withFormatter($formatter);
@@ -407,7 +408,7 @@ class Connection implements ConnectionInterface
      */
     public function getClient()
     {
-        if (!$this->neo) {
+        if (! $this->neo) {
             $this->setClient($this->createSingleConnectionClient());
         }
 
@@ -483,7 +484,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the connection password.
      *
-     * @return int|strings
+     * @return int|string
      */
     public function getPassword(array $config)
     {
@@ -585,7 +586,7 @@ class Connection implements ConnectionInterface
      * @param string $query
      * @param array  $bindings
      *
-     * @return int
+     * @return SummarizedResult
      */
     public function delete($query, $bindings = [])
     {
@@ -716,7 +717,7 @@ class Connection implements ConnectionInterface
             // will not accept replacing "id(n)" with a value
             // which have been previously processed by the grammar
             // to be _nodeId instead.
-            if (!is_array($binding)) {
+            if (! is_array($binding)) {
                 $binding = [$binding];
             }
 
@@ -724,7 +725,7 @@ class Connection implements ConnectionInterface
                 // We should not pass any numeric key-value items since the Neo4j client expects
                 // a JSON dictionary.
                 if (is_numeric($property)) {
-                    $property = (!is_numeric($key)) ? $key : 'id';
+                    $property = (! is_numeric($key)) ? $key : 'id';
                 }
 
                 if ($property == 'id') {
@@ -752,7 +753,7 @@ class Connection implements ConnectionInterface
      */
     public function getQueryGrammar()
     {
-        if (!$this->queryGrammar) {
+        if (! $this->queryGrammar) {
             $this->useDefaultQueryGrammar();
         }
 
@@ -764,7 +765,7 @@ class Connection implements ConnectionInterface
      *
      * @return CypherGrammar
      */
-    protected function getDefaultQueryGrammar()
+    public function getDefaultQueryGrammar()
     {
         return new Query\Grammars\CypherGrammar();
     }
@@ -781,11 +782,11 @@ class Connection implements ConnectionInterface
      */
     public function isBinding(array $binding)
     {
-        if (!empty($binding)) {
+        if (! empty($binding)) {
             // A binding is valid only when the key is not a number
             $keys = array_keys($binding);
 
-            return !is_numeric(reset($keys));
+            return ! is_numeric(reset($keys));
         }
 
         return false;
@@ -794,7 +795,7 @@ class Connection implements ConnectionInterface
     /**
      * Execute a Closure within a transaction.
      *
-     * @param Closure $callback
+     * @param \Closure $callback
      *
      * @return mixed
      *
@@ -887,7 +888,7 @@ class Connection implements ConnectionInterface
     /**
      * Execute the given callback in "dry run" mode.
      *
-     * @param Closure $callback
+     * @param \Closure $callback
      *
      * @return array
      */
@@ -926,15 +927,16 @@ class Connection implements ConnectionInterface
 
         return $query->from($label);
     }
-    
+
     /**
      * Get a new query builder instance.
      */
     public function query()
     {
         return new QueryBuilder(
-            $this, $this->getQueryGrammar(), $this->getPostProcessor()
+            $this, $this->getQueryGrammar()
         );
+        //was used as third argument on QueryBuilder: $this->getPostProcessor()
     }
 
     /**
@@ -942,7 +944,7 @@ class Connection implements ConnectionInterface
      *
      * @param string  $query
      * @param array   $bindings
-     * @param Closure $callback
+     * @param \Closure $callback
      *
      * @return mixed
      *
@@ -959,9 +961,9 @@ class Connection implements ConnectionInterface
             $result = $callback($this, $query, $bindings);
         }
 
-            // If an exception occurs when attempting to run a query, we'll format the error
-            // message to include the bindings with Cypher, which will make this exception a
-            // lot more helpful to the developer instead of just the database's errors.
+        // If an exception occurs when attempting to run a query, we'll format the error
+        // message to include the bindings with Cypher, which will make this exception a
+        // lot more helpful to the developer instead of just the database's errors.
         catch (Exception $e) {
             $this->handleExceptions($query, $bindings, $e);
         }
@@ -981,11 +983,11 @@ class Connection implements ConnectionInterface
      *
      * @param string   $query
      * @param array    $bindings
-     * @param Closure $callback
+     * @param \Closure $callback
      *
      * @return mixed
      *
-     * @throws InvalidCypherException
+     * @throws QueryException
      */
     protected function runQueryCallback($query, $bindings, Closure $callback)
     {
@@ -1014,7 +1016,7 @@ class Connection implements ConnectionInterface
      * @param Exceptions\Exception $e
      * @param string                                    $query
      * @param array                                     $bindings
-     * @param Closure $callback
+     * @param \Closure $callback
      *
      * @return mixed
      *
@@ -1034,7 +1036,7 @@ class Connection implements ConnectionInterface
     /**
      * Determine if the given exception was caused by a lost connection.
      *
-     * @param  \Illuminate\Database\QueryException
+     * @param QueryException
      * @return bool
      */
     protected function causedByLostConnection(QueryException $e)
@@ -1097,7 +1099,7 @@ class Connection implements ConnectionInterface
     /**
      * Register a database query listener with the connection.
      *
-     * @param Closure $callback
+     * @param \Closure $callback
      */
     public function listen(Closure $callback)
     {
@@ -1114,7 +1116,7 @@ class Connection implements ConnectionInterface
     protected function fireConnectionEvent($event)
     {
         if (isset($this->events)) {
-            $this->events->dispatch('connection.'.$this->getName().'.'.$event, $this);
+            $this->events->dispatch('connection.' . $this->getName() . '.' . $event, $this);
         }
     }
 
@@ -1147,7 +1149,7 @@ class Connection implements ConnectionInterface
     /**
      * Set the schema grammar used by the connection.
      *
-     * @param  \Illuminate\Database\Schema\Grammars\Grammar
+     * @param CypherGrammar
      */
     public function setSchemaGrammar(SchemaGrammar $grammar)
     {
@@ -1157,7 +1159,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the schema grammar used by the connection.
      *
-     * @return \Illuminate\Database\Query\Grammars\Grammar
+     * @return CypherGrammar
      */
     public function getSchemaGrammar()
     {
@@ -1167,7 +1169,7 @@ class Connection implements ConnectionInterface
     /**
      * Get the default schema grammar instance.
      *
-     * @return \Illuminate\Database\Schema\Grammars\Grammar
+     * @return CypherGrammar
      */
     protected function getDefaultSchemaGrammar()
     {
@@ -1200,7 +1202,7 @@ class Connection implements ConnectionInterface
     /**
      * @return string
      */
-    private function buildUriFromConfig(array $config): string
+    private function buildUriFromConfig(array $config) : string
     {
         $uri = '';
         $scheme = $this->getScheme($config);
@@ -1220,7 +1222,7 @@ class Connection implements ConnectionInterface
 
         $database = $this->getDatabase($config);
         if ($database) {
-            $uri .= '?database='.urlencode($database);
+            $uri .= '?database=' . urlencode($database);
         }
 
         return $uri;
@@ -1229,7 +1231,7 @@ class Connection implements ConnectionInterface
     /**
      * @return AuthenticateInterface
      */
-    private function getAuth(): AuthenticateInterface
+    private function getAuth() : AuthenticateInterface
     {
         $username = $this->getUsername($this->getConfig());
         $password = $this->getPassword($this->getConfig());

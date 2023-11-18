@@ -1,4 +1,5 @@
-<?php namespace Vinelab\NeoEloquent\Eloquent;
+<?php
+namespace Vinelab\NeoEloquent\Eloquent;
 
 use Illuminate\Support\Traits\Macroable;
 use Vinelab\NeoEloquent\Eloquent\Model;
@@ -9,7 +10,7 @@ class NeoFactoryBuilder extends FactoryBuilder
     /**
      * Create a collection of models and persist them to the database.
      *
-     * @param  array  $attributes
+     * @param array  $attributes
      * @return mixed
      */
     public function create(array $attributes = [])
@@ -28,7 +29,7 @@ class NeoFactoryBuilder extends FactoryBuilder
     /**
      * Set the connection name on the results and store them.
      *
-     * @param  \Illuminate\Support\Collection  $results
+     * @param \Illuminate\Support\Collection  $results
      * @return void
      */
     protected function store($results)

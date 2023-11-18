@@ -10,7 +10,7 @@ use RuntimeException;
 
 trait ResultTrait
 {
-    public function getRecordsByPlaceholders(CypherList $result): array
+    public function getRecordsByPlaceholders(CypherList $result) : array
     {
         $recordsByKeys = [];
         /**
@@ -26,7 +26,7 @@ trait ResultTrait
         return $recordsByKeys;
     }
 
-    public function getRelationshipRecords(CypherList $results): array
+    public function getRelationshipRecords(CypherList $results) : array
     {
         $relationships = [];
 
@@ -37,7 +37,7 @@ trait ResultTrait
         return $relationships;
     }
 
-    public function getNodeRecords(CypherList $result): array
+    public function getNodeRecords(CypherList $result) : array
     {
         $nodes = [];
 
@@ -59,9 +59,9 @@ trait ResultTrait
         return $map->first()->getValue();
     }
 
-    public function getNodeByType(Relationship $relation, array $nodes, string $type = 'start'): Node
+    public function getNodeByType(Relationship $relation, array $nodes, string $type = 'start') : Node
     {
-        if($type === 'start') {
+        if ($type === 'start') {
             $id = $relation->getStartNodeId();
         } else {
             $id = $relation->getEndNodeId();
@@ -69,7 +69,7 @@ trait ResultTrait
 
         /** @var Node $node */
         foreach ($nodes as $node) {
-            if($id === $node->getId()) {
+            if ($id === $node->getId()) {
                 return $node;
             }
         }
@@ -80,12 +80,12 @@ trait ResultTrait
     /**
      * @return list<Node>
      */
-    public function getRecordNodes(CypherMap $record): array
+    public function getRecordNodes(CypherMap $record) : array
     {
         $nodes = [];
 
         foreach ($record as $value) {
-            if($value instanceof Node) {
+            if ($value instanceof Node) {
                 $nodes[] = $value;
             }
         }
@@ -94,14 +94,14 @@ trait ResultTrait
     }
 
     /**
-     * @return list<Node>
+     * @return array<Relationship>
      */
-    public function getRecordRelationships(CypherMap $record): array
+    public function getRecordRelationships(CypherMap $record) : array
     {
         $relationships = [];
 
         foreach ($record as $item) {
-            if($item instanceof Relationship) {
+            if ($item instanceof Relationship) {
                 $relationships[] = $item;
             }
         }

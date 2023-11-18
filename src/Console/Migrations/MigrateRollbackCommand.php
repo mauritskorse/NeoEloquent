@@ -24,14 +24,14 @@ class MigrateRollbackCommand extends Command
     /**
      * The migrator instance.
      *
-     * @var \Illuminate\Database\Migrations\Migrator
+     * @var Migrator
      */
     protected $migrator;
 
     /**
      * Create a new migration rollback command instance.
      *
-     * @param \Illuminate\Database\Migrations\Migrator $migrator
+     * @param Migrator $migrator
      */
     public function __construct(Migrator $migrator)
     {
@@ -45,7 +45,7 @@ class MigrateRollbackCommand extends Command
      */
     public function fire()
     {
-        if (!$this->confirmToProceed()) {
+        if (! $this->confirmToProceed()) {
             return;
         }
 

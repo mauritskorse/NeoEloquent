@@ -12,9 +12,9 @@ abstract class Grammar
     /**
      * The Query builder instance.
      *
-     * @var Vinelab\NeoEloquent\Query\Builder
+     * @var Builder
      */
-    protected $query;
+    protected Builder $query;
 
     /**
      * The grammar's node label prefix.
@@ -60,7 +60,7 @@ abstract class Grammar
     /**
      * Get the value of a raw expression.
      *
-     * @param \Illuminate\Database\Query\Expression $expression
+     * @param Expression $expression
      *
      * @return string
      */
@@ -99,7 +99,7 @@ abstract class Grammar
             $property = explode('.', $property)[1];
         }
 
-        return '$'.$property;
+        return '$' . $property;
     }
 
     /**
@@ -131,7 +131,7 @@ abstract class Grammar
     {
         // every label must begin with a ':' so we need to check
         // and reformat if need be.
-        return trim(':`'.preg_replace('/^:/', '', $label).'`');
+        return trim(':`' . preg_replace('/^:/', '', $label) . '`');
     }
 
     /**
@@ -144,7 +144,7 @@ abstract class Grammar
      */
     public function prepareRelation($relation, $related)
     {
-        return $this->getRelationIdentifier($relation, $related).":{$relation}";
+        return $this->getRelationIdentifier($relation, $related) . ":{$relation}";
     }
 
     /**
@@ -157,7 +157,7 @@ abstract class Grammar
      */
     public function getRelationIdentifier($relation, $related)
     {
-        return 'rel_'.mb_strtolower($relation).'_'.$related;
+        return 'rel_' . mb_strtolower($relation) . '_' . $related;
     }
 
     /**
@@ -172,6 +172,17 @@ abstract class Grammar
     {
         return mb_strtolower(str_replace(':', '_', preg_replace('/^:/', '', $labels)));
     }
+
+
+    /**
+     * added missing method
+     * @todo make proper implementation of removeLeadingBoolean
+     */
+    public function removeLeadingBoolean(string $cypher)
+    {
+        return $cypher;
+    }
+
 
     /**
      * Wrap a value in keyword identifiers.
@@ -195,10 +206,10 @@ abstract class Grammar
         // different: id(n) instead of n.id
 
         if ($value == 'id') {
-            return 'id('.$this->query->modelAsNode().')';
+            return 'id(' . $this->query->modelAsNode() . ')';
         }
 
-        return $this->query->modelAsNode().'.'.$value;
+        return $this->query->modelAsNode() . '.' . $value;
     }
 
     /**
@@ -214,7 +225,7 @@ abstract class Grammar
             return $value;
         }
 
-        return '"'.str_replace('"', '""', $value).'"';
+        return '"' . str_replace('"', '""', $value) . '"';
     }
 
     /**
@@ -242,7 +253,7 @@ abstract class Grammar
         $arrayValue = true;
 
         // we'll only deal with arrays so let's turn it into one if it isn't
-        if (!is_array($values)) {
+        if (! is_array($values)) {
             $arrayValue = false;
             $values = [$values];
         }
@@ -259,7 +270,7 @@ abstract class Grammar
             // except when they're strings, we need to
             // escape wrap them.
             if (is_string($value)) {
-                $value = "'".addslashes($value)."'";
+                $value = "'" . addslashes($value) . "'";
             }
             // In order to support boolean value types and not have PHP convert them to their
             // corresponding string values, we'll have to handle boolean values and add their literal string representation.
@@ -272,7 +283,7 @@ abstract class Grammar
         }, $values);
 
         // stringify them.
-        return $arrayValue ? '['.implode(',', $values).']' : implode(', ', $values);
+        return $arrayValue ? '[' . implode(',', $values) . ']' : implode(', ', $values);
     }
 
     /**
@@ -296,8 +307,8 @@ abstract class Grammar
         // When this is a related node we'll just prepend it with 'with_' that way we avoid
         // clashing node models in the cases like using recursive model relations.
         // @see https://github.com/Vinelab/NeoEloquent/issues/7
-        if (!is_null($relation)) {
-            $labels = 'with_'.$relation.'_'.$labels;
+        if (! is_null($relation)) {
+            $labels = 'with_' . $relation . '_' . $labels;
         }
 
         return mb_strtolower($labels);
@@ -306,7 +317,7 @@ abstract class Grammar
     /**
      * Set the query builder for this grammar instance.
      *
-     * @param \Vinelab\NeoEloquent\Query\Builder $query
+     * @param Builder $query
      */
     public function setQuery($query)
     {
@@ -325,8 +336,8 @@ abstract class Grammar
         // Check whether the column is still id so that we transform it to the form id(n) and then
         // recursively calling ourself to reformat accordingly.
         if ($column == 'id') {
-            $from = (!is_null($this->query)) ? $this->query->from : null;
-            $column = $this->getIdReplacement('id('.$this->modelAsNode($from).')');
+            $from = (! is_null($this->query)) ? $this->query->from : null;
+            $column = $this->getIdReplacement('id(' . $this->modelAsNode($from) . ')');
         }
         // When it's a form of node.attribute we'll just remove the '.' so that
         // we get a consistent form of binding key/value pairs.
@@ -366,7 +377,7 @@ abstract class Grammar
                 $identifier = $this->modelAsNode($entity['label']);
             }
 
-            $label = $identifier.$label;
+            $label = $identifier . $label;
         }
 
         $bindings = $entity['bindings'];
@@ -385,13 +396,13 @@ abstract class Grammar
             $properties[] = "$key: $value";
         }
 
-        return "($label { ".implode(', ', $properties).'})';
+        return "($label { " . implode(', ', $properties) . '})';
     }
 
     /**
      * Concatenate an array of segments, removing empties.
      *
-     * @param  array   $segments
+     * @param array   $segments
      * @return string
      */
     protected function concatenate($segments)
@@ -436,7 +447,7 @@ abstract class Grammar
      */
     public function getUniqueLabel($label)
     {
-        return $label.$this->labelPostfix.uniqid();
+        return $label . $this->labelPostfix . uniqid();
     }
 
     /**
@@ -467,7 +478,7 @@ abstract class Grammar
     /**
      * Check whether the given query has relation matches.
      *
-     * @param \Vinelab\NeoEloquent\Query\Builder $query
+     * @param Builder $query
      *
      * @return bool
      */
@@ -479,7 +490,7 @@ abstract class Grammar
     /**
      * Get the relation-based matches from the given query.
      *
-     * @param \Vinelab\NeoEloquent\Query\Builder $query
+     * @param Builder $query
      *
      * @return array
      */

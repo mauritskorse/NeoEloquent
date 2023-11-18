@@ -37,7 +37,7 @@ class MorphedByOne extends OneRelation
              *          return $this->belongsTo('User', 'PHONE');
              *     }
              * }
-            */
+             */
 
             // Get the parent node's placeholder.
             $parentNode = $this->query->getQuery()->modelAsNode($this->parent->nodeLabel());
@@ -86,14 +86,14 @@ class MorphedByOne extends OneRelation
     /**
      * Get an instance of the EdgeIn relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param array                               $attributes
+     * @param Model $model
+     * @param array $attributes
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\EdgeOut
+     * @return EdgeOut
      */
     public function getEdge(Model $model = null, $attributes = array())
     {
-        $model = (!is_null($model)) ? $model : $this->parent->{$this->relation};
+        $model = (! is_null($model)) ? $model : $this->parent->{$this->relation};
 
         // Indicate a unique relation since this only involves one other model.
         $unique = true;

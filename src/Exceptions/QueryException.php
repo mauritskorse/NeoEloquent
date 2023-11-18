@@ -3,7 +3,7 @@
 namespace Vinelab\NeoEloquent\Exceptions;
 
 use Exception;
-use Neoxygen\NeoClient\Exception\Neo4jException;
+use Laudis\Neo4j\Exception\Neo4jException;
 
 class QueryException extends Exception
 {
@@ -18,7 +18,7 @@ class QueryException extends Exception
         }
         // In case this exception is an instance of any other exception that we should not be handling
         // then we throw it as is.
-        elseif ($exception instanceof \Exception) {
+        elseif ($exception instanceof Exception) {
             throw $exception;
         }
         // We'll just add the query that was run.
@@ -30,7 +30,7 @@ class QueryException extends Exception
     /**
      * Format the message that should be printed out for devs.
      *
-     * @param \Neoxygen\NeoClient\Exception\Neo4jException $exception
+     * @param Neo4jException $exception
      *
      * @return string
      */
@@ -40,9 +40,9 @@ class QueryException extends Exception
 
         $message = substr($exception->getMessage(), strpos($exception->getMessage(), 'message ') + 8);
 
-        $exceptionName = $e ? $e.': ' : Neo4jException::class;
+        $exceptionName = $e ? $e . ': ' : Neo4jException::class;
         $message = $message ? $message : $exception->getMessage();
 
-        return $exceptionName.$message;
+        return $exceptionName . $message;
     }
 }

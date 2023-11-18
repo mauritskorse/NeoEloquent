@@ -40,8 +40,8 @@ abstract class OneRelation extends Relation implements RelationInterface
     /**
      * Create a new belongs to relationship instance.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Builder $query
-     * @param \Vinelab\NeoEloquent\Eloquent\Model   $parent
+     * @param Builder $query
+     * @param Model   $parent
      * @param string                                $relationType
      * @param string                                $otherKey
      * @param string                                $relation
@@ -109,10 +109,10 @@ abstract class OneRelation extends Relation implements RelationInterface
     /**
      * Get an instance of the Edge[In, Out, etc.] relationship.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $model
+     * @param Model $model
      * @param array                               $attributes
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In,Out, etc.]
+     * @return Edge[In,Out, etc.]
      */
     abstract public function getEdge(Model $model = null, $attributes = array());
 
@@ -129,9 +129,9 @@ abstract class OneRelation extends Relation implements RelationInterface
     /**
      * Associate the model instance to the given parent.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge
+     * @return Edge
      */
     public function associate($model, $attributes = array())
     {
@@ -179,7 +179,7 @@ abstract class OneRelation extends Relation implements RelationInterface
     /**
      * Dissociate previously associated model from the given parent.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function dissociate()
     {
@@ -226,9 +226,9 @@ abstract class OneRelation extends Relation implements RelationInterface
      * Get the edge between the parent model and the given model or
      * the related model determined by the relation function name.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $model
+     * @param Model $model
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In,Out, etc.]
+     * @return Edge[In,Out, etc.]
      */
     public function edge(Model $model = null)
     {
@@ -259,7 +259,7 @@ abstract class OneRelation extends Relation implements RelationInterface
                 $model = reset($model);
             }
 
-            if (!is_null($value = $model->{$this->otherKey})) {
+            if (! is_null($value = $model->{$this->otherKey})) {
                 $keys[] = $value;
             }
         }
@@ -280,7 +280,7 @@ abstract class OneRelation extends Relation implements RelationInterface
      * Match the eagerly loaded results to their parents.
      *
      * @param array                                    $models
-     * @param \Vinelab\NeoEloquent\Eloquent\Collection $results
+     * @param Collection $results
      * @param string                                   $relation
      *
      * @return array

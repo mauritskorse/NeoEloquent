@@ -52,7 +52,7 @@ class TestCase extends PHPUnit
      *
      * @param string $config As specified in config/database.php
      *
-     * @return \Vinelab\NeoEloquent\Connection
+     * @return Connection
      */
     protected function getConnectionWithConfig($config = null)
     {

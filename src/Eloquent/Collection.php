@@ -13,7 +13,7 @@ class Collection extends BaseCollection
      * @param mixed $key
      * @param mixed $default
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function find($key, $default = null)
     {
@@ -113,13 +113,15 @@ class Collection extends BaseCollection
      */
     public function modelKeys()
     {
-        return array_map(function ($m) { return $m->getKey(); }, $this->items);
+        return array_map(function ($m) {
+            return $m->getKey();
+        }, $this->items);
     }
 
     /**
      * Merge the collection with the given items.
      *
-     * @param \ArrayAccess|array $items
+     * @param ArrayAccess|array $items
      *
      * @return static
      */
@@ -137,7 +139,7 @@ class Collection extends BaseCollection
     /**
      * Diff the collection with the given items.
      *
-     * @param \ArrayAccess|array $items
+     * @param ArrayAccess|array $items
      *
      * @return static
      */
@@ -148,7 +150,7 @@ class Collection extends BaseCollection
         $dictionary = $this->getDictionary($items);
 
         foreach ($this->items as $item) {
-            if (!isset($dictionary[$item->getKey()])) {
+            if (! isset($dictionary[$item->getKey()])) {
                 $diff->add($item);
             }
         }
@@ -159,7 +161,7 @@ class Collection extends BaseCollection
     /**
      * Intersect the collection with the given items.
      *
-     * @param \ArrayAccess|array $items
+     * @param ArrayAccess|array $items
      *
      * @return static
      */
@@ -182,13 +184,13 @@ class Collection extends BaseCollection
      * Return only unique items from the collection array.
      *
      * @param string|callable|null $key
-     * @param  bool  $strict
+     * @param bool  $strict
      *
      * @return static
      */
     public function unique($key = null, $strict = false)
     {
-        if (!is_null($key)) {
+        if (! is_null($key)) {
             return parent::unique($key, $strict);
         }
 
@@ -218,7 +220,7 @@ class Collection extends BaseCollection
      */
     public function except($keys)
     {
-        $dictionary = array_except($this->getDictionary(), $keys);
+        $dictionary = Arr::except($this->getDictionary(), $keys);
 
         return new static(array_values($dictionary));
     }
@@ -226,7 +228,7 @@ class Collection extends BaseCollection
     /**
      * Get a dictionary keyed by primary keys.
      *
-     * @param \ArrayAccess|array $items
+     * @param ArrayAccess|array $items
      *
      * @return array
      */

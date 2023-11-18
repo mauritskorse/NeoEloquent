@@ -12,7 +12,7 @@ class HyperMorph extends BelongsToMany
      * The morph Model instance
      * representing the 3rd Node of the relationship.
      *
-     * @var \Vinelab\NeoEloquent\Eloquent\Model
+     * @var Model
      */
     protected $morph;
 
@@ -34,9 +34,9 @@ class HyperMorph extends BelongsToMany
     /**
      * Create a new HyperMorph relationship.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Builder $query
-     * @param Vinelab\NeoEloquent\Eloquent\Model    $parent
-     * @param Vinelab\NeoEloquent\Eloquent\Model    $morph
+     * @param Builder $query
+     * @param Model    $parent
+     * @param Model    $morph
      * @param string                                $type
      * @param string                                $morphType
      * @param string                                $key
@@ -79,7 +79,7 @@ class HyperMorph extends BelongsToMany
              *          return $this->hasOne('Phone', 'PHONE');
              *     }
              * }
-            */
+             */
 
             // Get the parent node's placeholder.
             $parentNode = $this->getParentNode();
@@ -132,7 +132,7 @@ class HyperMorph extends BelongsToMany
 
     public function getEdge(Model $model = null, $properties = array())
     {
-        $model = (!is_null($model)) ? $model : $this->related;
+        $model = (! is_null($model)) ? $model : $this->related;
 
         return new HyperEdge($this->query, $this->parent, $this->type, $model, $this->morphType, $this->morph, $properties);
     }

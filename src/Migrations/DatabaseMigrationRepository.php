@@ -12,14 +12,14 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * The database connection resolver instance.
      *
-     * @var \Illuminate\Database\ConnectionResolverInterface
+     * @var ConnectionResolverInterface
      */
     protected $resolver;
 
     /**
      * The migration model.
      *
-     * @var \Vinelab\NeoEloquent\Eloquent\Model
+     * @var Model
      */
     protected $model;
 
@@ -31,9 +31,9 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     protected $connection;
 
     /**
-     * @param \Illuminate\Database\ConnectionResolverInterface $resolver
-     * @param \Vinelab\NeoEloquent\Schema\Builder              $schema
-     * @param \Vinelab\NeoEloquent\Eloquent\Model              $model
+     * @param ConnectionResolverInterface $resolver
+     * @param Builder              $schema
+     * @param Model              $model
      */
     public function __construct(ConnectionResolverInterface $resolver, SchemaBuilder $schema, Model $model)
     {
@@ -53,7 +53,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Get list of migrations.
      *
-     * @param  int  $steps
+     * @param int  $steps
      * @return array
      */
     public function getMigrations($steps)
@@ -66,16 +66,16 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Get the list of the migrations by batch number.
      *
-     * @param  int  $batch
+     * @param int  $batch
      * @return array
      */
     public function getMigrationsByBatch($batch)
     {
         return $this->label()
-                    ->where('batch', $batch)
-                    ->orderBy('migration', 'desc')
-                    ->get()
-                    ->all();
+            ->where('batch', $batch)
+            ->orderBy('migration', 'desc')
+            ->get()
+            ->all();
     }
 
     /**
@@ -139,7 +139,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Get a query builder for the migration node (table).
      *
-     * @return \Vinelab\NeoEloquent\Query\Builder
+     * @return Builder
      */
     protected function label()
     {
@@ -149,7 +149,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Get the connection resolver instance.
      *
-     * @return \Illuminate\Database\ConnectionResolverInterface
+     * @return ConnectionResolverInterface
      */
     public function getConnectionResolver()
     {
@@ -159,7 +159,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Resolve the database connection instance.
      *
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      */
     public function getConnection()
     {
@@ -197,7 +197,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Set migration model.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $model
+     * @param Model $model
      */
     public function setMigrationModel(Model $model)
     {
@@ -207,7 +207,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
     /**
      * Get migration model.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Model
+     * @return Model
      */
     public function getMigrationModel()
     {
@@ -221,7 +221,7 @@ class DatabaseMigrationRepository implements MigrationRepositoryInterface
             ->get();
     }
 
-    public function deleteRepository(): void
+    public function deleteRepository() : void
     {
         $this->label()->delete();
     }

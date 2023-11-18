@@ -23,6 +23,13 @@ class NeoEloquentServiceProvider extends ServiceProvider
     protected $defer = false;
 
     /**
+     * Config
+     * 
+     * @var array
+     */
+    protected $config = array();
+
+    /**
      * Components to register on the provider.
      *
      * @var array
@@ -54,7 +61,7 @@ class NeoEloquentServiceProvider extends ServiceProvider
             return $conn;
         });
 
-        $this->app->bind('neoeloquent.connection', function() {
+        $this->app->bind('neoeloquent.connection', function () {
             // $config is set by the previous binding,
             // so that we get the correct configuration
             // set by the user.
@@ -70,10 +77,11 @@ class NeoEloquentServiceProvider extends ServiceProvider
             $loader->alias('Neo4jSchema', 'Vinelab\NeoEloquent\Facade\Neo4jSchema');
             $loader->alias('Illuminate\Database\Eloquent\Factory', 'Vinelab\NeoEloquent\Eloquent\NeoEloquentFactory');
         });
-    
+
         $this->app->singleton(NeoEloquentFactory::class, function ($app) {
             return NeoEloquentFactory::construct(
-                $app->make(FakerGenerator::class), $this->app->databasePath('factories')
+                $app->make(FakerGenerator::class),
+                $this->app->databasePath('factories')
             );
         });
 
@@ -88,7 +96,7 @@ class NeoEloquentServiceProvider extends ServiceProvider
     protected function registerComponents()
     {
         foreach ($this->components as $component) {
-            $this->{'register'.$component}();
+            $this->{'register' . $component}();
         }
     }
 

@@ -13,21 +13,21 @@ abstract class Relation
     /**
      * The Eloquent query builder instance.
      *
-     * @var \Illuminate\Database\Eloquent\Builder
+     * @var Builder
      */
     protected $query;
 
     /**
      * The parent model instance.
      *
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var Model
      */
     protected $parent;
 
     /**
      * The related model instance.
      *
-     * @var \Illuminate\Database\Eloquent\Model
+     * @var Model
      */
     protected $related;
 
@@ -48,8 +48,8 @@ abstract class Relation
     /**
      * Create a new relation instance.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model   $parent
+     * @param Builder $query
+     * @param Model   $parent
      */
     public function __construct(Builder $query, Model $parent)
     {
@@ -85,9 +85,9 @@ abstract class Relation
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param array                                    $models
-     * @param \Vinelab\NeoEloquent\Eloquent\Collection $results
-     * @param string                                   $relation
+     * @param array      $models
+     * @param Collection $results
+     * @param string     $relation
      *
      * @return array
      */
@@ -103,7 +103,7 @@ abstract class Relation
     /**
      * Get the relationship for eager loading.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getEager()
     {
@@ -135,10 +135,10 @@ abstract class Relation
     /**
      * Add the constraints for a relationship count query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Builder $parent
+     * @param Builder $query
+     * @param Builder $parent
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function getRelationCountQuery(Builder $query, Builder $parent)
     {
@@ -180,7 +180,7 @@ abstract class Relation
      * parent model. When there's a match, the identifier at which
      * the match occurred is returned.
      *
-     * @param  array  $models
+     * @param array  $models
      *
      * @return string
      */
@@ -212,7 +212,7 @@ abstract class Relation
     /**
      * Get the underlying query for the relation.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return Builder
      */
     public function getQuery()
     {
@@ -222,7 +222,7 @@ abstract class Relation
     /**
      * Get the base query builder driving the Eloquent builder.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     public function getBaseQuery()
     {
@@ -232,7 +232,7 @@ abstract class Relation
     /**
      * Get the parent model of the relation.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function getParent()
     {
@@ -252,7 +252,7 @@ abstract class Relation
     /**
      * Get the related model of the relation.
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function getRelated()
     {

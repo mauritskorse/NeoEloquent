@@ -59,7 +59,7 @@ class BelongsToMany extends HasOneOrMany
      * Match the eagerly loaded results to their parents.
      *
      * @param array                                    $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param Collection $results
      * @param string                                   $relation
      *
      * @return array
@@ -98,7 +98,7 @@ class BelongsToMany extends HasOneOrMany
              *          return $this->hasOne('Phone', 'PHONE');
              *     }
              * }
-            */
+             */
 
             // Get the parent node's placeholder.
             $parentNode = $this->getParentNode();
@@ -151,9 +151,9 @@ class BelongsToMany extends HasOneOrMany
      * Get the edge between the parent model and the given model or
      * the related model determined by the relation function name.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In|Out]
+     * @return Edge[In|Out]
      */
     public function edge(Model $model = null)
     {
@@ -163,14 +163,14 @@ class BelongsToMany extends HasOneOrMany
     /**
      * Get an instance of the Edge[In|Out] relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      * @param array                               $attributes
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In|Out]
+     * @return Edge[In|Out]
      */
     public function getEdge(Model $model = null, $attributes = array())
     {
-        $model = (!is_null($model)) ? $model : $this->related;
+        $model = (! is_null($model)) ? $model : $this->related;
 
         return new EdgeIn($this->query, $this->parent, $model, $this->type, $attributes);
     }

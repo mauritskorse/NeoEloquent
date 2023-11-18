@@ -24,12 +24,12 @@ class MigrateResetCommand extends Command
     /**
      * The migrator instance.
      *
-     * @var \Vinelab\NeoEloquent\Migrations\Migrator
+     * @var Migrator
      */
     protected $migrator;
 
     /**
-     * @param \Vinelab\NeoEloquent\Migrations\Migrator $migrator
+     * @param Migrator $migrator
      */
     public function __construct(Migrator $migrator)
     {
@@ -43,7 +43,7 @@ class MigrateResetCommand extends Command
      */
     public function fire()
     {
-        if (!$this->confirmToProceed()) {
+        if (! $this->confirmToProceed()) {
             return;
         }
 

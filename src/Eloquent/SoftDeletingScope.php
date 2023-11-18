@@ -14,8 +14,8 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Apply the scope to a given Eloquent query builder.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param \Illuminate\Database\Eloquent\Model   $model
+     * @param Builder $builder
+     * @param Model   $model
      */
     public function apply(Builder $builder, Model $model)
     {
@@ -27,8 +27,8 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Remove the scope from the given Eloquent query builder.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
-     * @param \Illuminate\Database\Eloquent\Model   $model
+     * @param Builder $builder
+     * @param Model   $model
      */
     public function remove(Builder $builder, Model $model)
     {
@@ -44,7 +44,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Extend the query builder with the needed functions.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param Builder $builder
      */
     public function extend(Builder $builder)
     {
@@ -64,7 +64,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Get the "deleted at" column for the builder.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param Builder $builder
      *
      * @return string
      */
@@ -80,7 +80,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Add the force delete extension to the builder.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param Builder $builder
      */
     protected function addForceDelete(Builder $builder)
     {
@@ -92,7 +92,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Add the restore extension to the builder.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param Builder $builder
      */
     protected function addRestore(Builder $builder)
     {
@@ -106,7 +106,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Add the with-trashed extension to the builder.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param Builder $builder
      */
     protected function addWithTrashed(Builder $builder)
     {
@@ -120,7 +120,7 @@ class SoftDeletingScope implements ScopeInterface
     /**
      * Add the only-trashed extension to the builder.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $builder
+     * @param Builder $builder
      */
     protected function addOnlyTrashed(Builder $builder)
     {

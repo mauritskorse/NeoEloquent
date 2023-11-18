@@ -19,9 +19,9 @@ class Finder extends Delegate
     /**
      * Create a new Finder instance.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Builder $query
-     * @param \Vinelab\NeoEloquent\Eloquent\Model   $parent
-     * @param \Vinelab\NeoEloquent\Eloquent\Model   $related
+     * @param Builder $query
+     * @param Model   $parent
+     * @param Model   $related
      * @param string                                $type
      */
     public function __construct(Builder $query)
@@ -32,11 +32,11 @@ class Finder extends Delegate
     /**
      * Get the first edge relationship between two models.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $parentModel
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $relatedModel
+     * @param Model $parentModel
+     * @param Model $relatedModel
      * @param string                              $direction
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In|Out]|null
+     * @return Edge[In|Out]|null
      */
     public function first(Model $parentModel, Model $relatedModel, $type, $direction)
     {
@@ -58,11 +58,11 @@ class Finder extends Delegate
     /**
      * Get the edges between two models.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $parent
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $related
+     * @param Model $parent
+     * @param Model $related
      * @param string|array                        $type
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function get(Model $parent, Model $related, $type, $direction)
     {
@@ -104,13 +104,13 @@ class Finder extends Delegate
     /**
      * Get the first HyperEdge between three models.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $parent
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $related
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $morph
+     * @param Model $parent
+     * @param Model $related
+     * @param Model $morph
      * @param string                              $type
      * @param string                              $morphType
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\HyperEdge
+     * @return HyperEdge
      */
     public function hyperFirst($parent, $related, $morph, $type, $morphType)
     {
@@ -130,10 +130,9 @@ class Finder extends Delegate
 
     /**
      * Get the direction of a relationship out of a Relation instance.
-     *
-     * @param \GraphAware\Neo4j\Client\Formatter\Result $results
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $parent
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $related
+     * @param Result $results
+     * @param Model $parent
+     * @param Model $related
      *
      * @return string Either 'in' or 'out'
      */
@@ -167,7 +166,7 @@ class Finder extends Delegate
      * @param Model $parent
      * @param Model $related
      * @param string $direction can be 'in' or 'out'
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In|Out]
+     * @return Edge[In|Out]
      */
     public function edgeFromRelationWithDirection(CypherMap $record, Model $parent, Model $related, $direction)
     {
@@ -213,6 +212,6 @@ class Finder extends Delegate
      */
     public function getEdgeClass($direction)
     {
-        return __NAMESPACE__.'\Edge'.ucfirst(mb_strtolower($direction));
+        return __NAMESPACE__ . '\Edge' . ucfirst(mb_strtolower($direction));
     }
 }

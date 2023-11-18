@@ -20,7 +20,7 @@ class ConnectionFactory
     /**
      * The IoC container instance.
      *
-     * @var \Illuminate\Contracts\Container\Container
+     * @var Container
      */
     protected $container;
 
@@ -28,7 +28,7 @@ class ConnectionFactory
     /**
      * Create a new connection factory instance.
      *
-     * @param \Illuminate\Contracts\Container\Container $container
+     * @param Container $container
      */
     public function __construct(Container $container)
     {
@@ -41,7 +41,7 @@ class ConnectionFactory
      * @param array  $config
      * @param string $name
      *
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      */
     public function make(array $config, $name = null)
     {
@@ -64,7 +64,7 @@ class ConnectionFactory
      *
      * @param array $config
      *
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      */
     protected function createSingleConnection(array $config)
     {
@@ -78,7 +78,7 @@ class ConnectionFactory
      *
      * @param array $config
      *
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      */
     protected function createMultiServerConnection(array $config)
     {
@@ -99,7 +99,7 @@ class ConnectionFactory
      *
      * @param array $config
      *
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      */
     protected function createReadWriteConnection(array $config)
     {
@@ -158,7 +158,7 @@ class ConnectionFactory
      *
      * @param array $config
      *
-     * @return \Illuminate\Database\Connectors\ConnectorInterface
+     * @return Connectors\ConnectorInterface
      *
      * @throws \InvalidArgumentException
      */
@@ -186,7 +186,7 @@ class ConnectionFactory
      * @param string        $prefix
      * @param array         $config
      *
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      *
      * @throws \InvalidArgumentException
      */

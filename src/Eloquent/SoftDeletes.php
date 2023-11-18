@@ -90,13 +90,13 @@ trait SoftDeletes
      */
     public function trashed()
     {
-        return !is_null($this->{$this->getDeletedAtColumn()});
+        return ! is_null($this->{$this->getDeletedAtColumn()});
     }
 
     /**
      * Get a new query builder that includes soft deletes.
      *
-     * @return \Illuminate\Database\Eloquent\Builder|static
+     * @return Builder|static
      */
     public static function withTrashed()
     {
@@ -106,7 +106,7 @@ trait SoftDeletes
     /**
      * Get a new query builder that only includes soft deletes.
      *
-     * @return \Illuminate\Database\Eloquent\Builder|static
+     * @return Builder|static
      */
     public static function onlyTrashed()
     {

@@ -10,7 +10,7 @@ class Builder
     /**
      * The database connection resolver.
      *
-     * @var \Illuminate\Database\ConnectionInterface
+     * @var ConnectionInterface
      */
     protected $conn;
 
@@ -22,7 +22,7 @@ class Builder
     protected $resolver;
 
     /**
-     * @param \Illuminate\Database\ConnectionInterface $conn
+     * @param ConnectionInterface $conn
      */
     public function __construct(ConnectionInterface $conn)
     {
@@ -57,9 +57,9 @@ you can do so by passing additional arguments to default migration command like:
      * Create a new data defintion on label schema.
      *
      * @param string  $label
-     * @param Closure $callback
+     * @param \Closure $callback
      *
-     * @return \Vinelab\NeoEloquent\Schema\Blueprint
+     * @return Blueprint
      */
     public function label($label, Closure $callback)
     {
@@ -73,7 +73,7 @@ you can do so by passing additional arguments to default migration command like:
      *
      * @param string $label
      *
-     * @return \Vinelab\NeoEloquent\Schema\Blueprint
+     * @return Blueprint
      */
     public function drop($label)
     {
@@ -89,7 +89,7 @@ you can do so by passing additional arguments to default migration command like:
      *
      * @param string $label
      *
-     * @return \Vinelab\NeoEloquent\Schema\Blueprint
+     * @return Blueprint
      */
     public function dropIfExists($label)
     {
@@ -134,7 +134,7 @@ you can do so by passing additional arguments to default migration command like:
      * @param string $from
      * @param string $to
      *
-     * @return \Vinelab\NeoEloquent\Schema\Blueprint|bool
+     * @return Blueprint|bool
      */
     public function renameLabel($from, $to)
     {
@@ -162,9 +162,9 @@ you can do so by passing additional arguments to default migration command like:
      * Create a new command set with a Closure.
      *
      * @param string  $label
-     * @param Closure $callback
+     * @param \Closure $callback
      *
-     * @return \Vinelab\NeoEloquent\Schema\Blueprint
+     * @return Blueprint
      */
     protected function createBlueprint($label, Closure $callback = null)
     {
@@ -178,9 +178,9 @@ you can do so by passing additional arguments to default migration command like:
     /**
      * Set the database connection instance.
      *
-     * @param  \Illuminate\Database\ConnectionResolverInterface
+     * @param ConnectionResolverInterface
      *
-     * @return \Vinelab\NeoEloquent\Schema\Builder
+     * @return Builder
      */
     public function setConnection(ConnectionInterface $connection)
     {
@@ -192,7 +192,7 @@ you can do so by passing additional arguments to default migration command like:
     /**
      * Get the database connection instance.
      *
-     * @return \Illuminate\Database\ConnectionResolverInterface
+     * @return ConnectionResolverInterface
      */
     public function getConnection()
     {

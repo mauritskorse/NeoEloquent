@@ -36,7 +36,7 @@ class MorphMany extends BelongsToMany
              *          return $this->hasOne('Phone', 'PHONE');
              *     }
              * }
-            */
+             */
 
             // Get the parent node's placeholder.
             $parentNode = $this->query->getQuery()->modelAsNode($this->parent->nodeLabel());
@@ -84,15 +84,16 @@ class MorphMany extends BelongsToMany
 
     /**
      * Get an instance of the Edge[In|Out] relationship.
+     * @todo: check method as it only seems to return EdgeOut and not EdgeIn
+     * 
+     * @param Model $model
+     * @param array $attributes
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param array                               $attributes
-     *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In|Out]
+     * @return Edge[In|Out]
      */
     public function getEdge(Model $model = null, $attributes = array())
     {
-        $model = (!is_null($model)) ? $model : $this->related;
+        $model = (! is_null($model)) ? $model : $this->related;
 
         return new EdgeOut($this->query, $this->parent, $model, $this->type, $attributes);
     }

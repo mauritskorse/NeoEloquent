@@ -26,7 +26,7 @@ class MigrateMakeCommand extends BaseCommand
 
     }
 
-    public function handle(): void
+    public function handle() : void
     {
         // It's possible for the developer to specify the tables to modify in this
         // schema operation. The developer may also specify if this label needs
@@ -37,7 +37,7 @@ class MigrateMakeCommand extends BaseCommand
 
         $modify = $this->input->getOption(name: 'create');
 
-        if(!$label && \is_string(value: $modify)) {
+        if (! $label && \is_string(value: $modify)) {
             $label = $modify;
         }
 
@@ -52,7 +52,7 @@ class MigrateMakeCommand extends BaseCommand
     /**
      * @throws Exception
      */
-    protected function writeMigration(string $name, string $label = null): void
+    protected function writeMigration(string $name, string $label = null) : void
     {
         $path = $this->getMigrationPath();
 
@@ -64,7 +64,7 @@ class MigrateMakeCommand extends BaseCommand
     /**
      * {@inheritDoc}
      */
-    protected function getArguments(): array
+    protected function getArguments() : array
     {
         return [
             ['name', InputArgument::REQUIRED, 'The name of the migration'],
@@ -74,7 +74,7 @@ class MigrateMakeCommand extends BaseCommand
     /**
      * {@inheritDoc}
      */
-    protected function getOptions(): array
+    protected function getOptions() : array
     {
         return [
             ['bench', null, InputOption::VALUE_OPTIONAL, 'The workbench the migration belongs to.', null],

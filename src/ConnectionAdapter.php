@@ -13,13 +13,22 @@ use Illuminate\Database\Connection as BaseConnection;
 use Illuminate\Database\Schema\Grammars\Grammar as SchemaGrammar;
 use Illuminate\Database\QueryException as IlluminateQueryException;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Database\Schema\Builder;
+use Illuminate\Database\Query\Expression;
 
 class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 {
-    public function __construct(array $config = [])
-    {
-        $this->neoeloquent = app('neoeloquent.connection');
-    }
+	/**
+	 * The Connection Sevice class
+	 * @var Connection neoeloquent
+	 */
+	protected Connection $neoeloquent;
+
+
+	public function __construct(array $config = [])
+	{
+		$this->neoeloquent = app(Connection::class);
+	}
 
 
 	/**
@@ -35,7 +44,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Get the default query grammar instance.
 	 *
-	 * @return \Illuminate\Database\Query\Grammars\Grammar
+	 * @return Grammar
 	 */
 	protected function getDefaultQueryGrammar()
 	{
@@ -55,9 +64,11 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Get the default schema grammar instance.
 	 *
-	 * @return \Illuminate\Database\Schema\Grammars\Grammar
+	 * @return Grammar
 	 */
-	protected function getDefaultSchemaGrammar() {}
+	protected function getDefaultSchemaGrammar()
+	{
+	}
 
 	/**
 	 * Set the query post processor to the default implementation.
@@ -72,51 +83,51 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Get the default post processor instance.
 	 *
-	 * @return \Illuminate\Database\Query\Processors\Processor
+	 * @return Processor
 	 */
 	protected function getDefaultPostProcessor()
 	{
-        return $this->neoeloquent->getDefaultPostProcessor();
+		return $this->neoeloquent->getDefaultPostProcessor();
 	}
 
 	/**
 	 * Get a schema builder instance for the connection.
 	 *
-	 * @return \Illuminate\Database\Schema\Builder
+	 * @return Builder
 	 */
 	public function getSchemaBuilder()
 	{
-        return $this->neoeloquent->getSchemaBuilder();
+		return $this->neoeloquent->getSchemaBuilder();
 	}
 
 	/**
 	 * Get a new raw query expression.
 	 *
-	 * @param  mixed  $value
-	 * @return \Illuminate\Database\Query\Expression
+	 * @param mixed  $value
+	 * @return Expression
 	 */
 	public function raw($value)
 	{
-        return $this->neoeloquent->raw($value);
+		return $this->neoeloquent->raw($value);
 	}
 
 	/**
 	 * Run a select statement and return a single result.
 	 *
-	 * @param  string  $query
-	 * @param  array   $bindings
+	 * @param string  $query
+	 * @param array   $bindings
 	 * @return mixed
 	 */
 	public function selectOne($query, $bindings = array(), $useReadPdo = true)
 	{
-        return $this->neoeloquent->selectOne($query, $bindings);
+		return $this->neoeloquent->selectOne($query, $bindings);
 	}
 
 	/**
 	 * Run a select statement against the database.
 	 *
-	 * @param  string  $query
-	 * @param  array   $bindings
+	 * @param string  $query
+	 * @param array   $bindings
 	 * @return array
 	 */
 	public function selectFromWriteConnection($query, $bindings = array())
@@ -127,21 +138,21 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Run a select statement against the database.
 	 *
-	 * @param  string  $query
-	 * @param  array  $bindings
-	 * @param  bool  $useReadPdo
+	 * @param string  $query
+	 * @param array  $bindings
+	 * @param bool  $useReadPdo
 	 * @return array
 	 */
 	public function select($query, $bindings = array(), $useReadPdo = true)
 	{
-        return $this->neoeloquent->select($query, $bindings);
+		return $this->neoeloquent->select($query, $bindings);
 	}
 
 	/**
 	 * Run an insert statement against the database.
 	 *
-	 * @param  string  $query
-	 * @param  array   $bindings
+	 * @param string  $query
+	 * @param array   $bindings
 	 * @return bool
 	 */
 	public function insert($query, $bindings = array())
@@ -152,8 +163,8 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Run an update statement against the database.
 	 *
-	 * @param  string  $query
-	 * @param  array   $bindings
+	 * @param string  $query
+	 * @param array   $bindings
 	 * @return int
 	 */
 	public function update($query, $bindings = array())
@@ -164,8 +175,8 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Run a delete statement against the database.
 	 *
-	 * @param  string  $query
-	 * @param  array   $bindings
+	 * @param string  $query
+	 * @param array   $bindings
 	 * @return int
 	 */
 	public function delete($query, $bindings = array())
@@ -176,8 +187,8 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Execute an SQL statement and return the boolean result.
 	 *
-	 * @param  string  $query
-	 * @param  array   $bindings
+	 * @param string  $query
+	 * @param array   $bindings
 	 * @return bool
 	 */
 	public function statement($query, $bindings = array(), $rawResults = false)
@@ -188,8 +199,8 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Run an SQL statement and get the number of rows affected.
 	 *
-	 * @param  string  $query
-	 * @param  array   $bindings
+	 * @param string  $query
+	 * @param array   $bindings
 	 * @return int
 	 */
 	public function affectingStatement($query, $bindings = array())
@@ -200,7 +211,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Run a raw, unprepared query against the PDO connection.
 	 *
-	 * @param  string  $query
+	 * @param string  $query
 	 * @return bool
 	 */
 	public function unprepared($query)
@@ -211,7 +222,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Prepare the query bindings for execution.
 	 *
-	 * @param  array  $bindings
+	 * @param array  $bindings
 	 * @return array
 	 */
 	public function prepareBindings(array $bindings)
@@ -222,14 +233,14 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Execute a Closure within a transaction.
 	 *
-	 * @param  \Closure  $callback
+	 * @param \Closure  $callback
 	 * @return mixed
 	 *
 	 * @throws \Exception
 	 */
 	public function transaction(Closure $callback, $attempts = 1)
 	{
-        $this->neoeloquent->transaction($callback, $attempts);
+		$this->neoeloquent->transaction($callback, $attempts);
 	}
 
 	/**
@@ -239,7 +250,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	 */
 	public function beginTransaction()
 	{
-        $this->neoeloquent->beginTransaction();
+		$this->neoeloquent->beginTransaction();
 	}
 
 	/**
@@ -249,7 +260,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	 */
 	public function commit()
 	{
-        $this->neoeloquent->commit();
+		$this->neoeloquent->commit();
 	}
 
 	/**
@@ -275,23 +286,23 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Execute the given callback in "dry run" mode.
 	 *
-	 * @param  \Closure  $callback
+	 * @param \Closure  $callback
 	 * @return array
 	 */
 	public function pretend(Closure $callback)
 	{
-        return $this->neoeloquent->pretend($callback);
+		return $this->neoeloquent->pretend($callback);
 	}
 
 	/**
 	 * Run a SQL statement and log its execution context.
 	 *
-	 * @param  string    $query
-	 * @param  array     $bindings
-	 * @param  \Closure  $callback
+	 * @param string    $query
+	 * @param array     $bindings
+	 * @param \Closure  $callback
 	 * @return mixed
 	 *
-	 * @throws \Illuminate\Database\QueryException
+	 * @throws QueryException
 	 */
 	protected function run($query, $bindings, Closure $callback)
 	{
@@ -301,12 +312,12 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Run a SQL statement.
 	 *
-	 * @param  string    $query
-	 * @param  array     $bindings
-	 * @param  \Closure  $callback
+	 * @param string    $query
+	 * @param array     $bindings
+	 * @param \Closure  $callback
 	 * @return mixed
 	 *
-	 * @throws \Illuminate\Database\QueryException
+	 * @throws QueryException
 	 */
 	protected function runQueryCallback($query, $bindings, Closure $callback)
 	{
@@ -316,13 +327,13 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Handle a query exception that occurred during query execution.
 	 *
-	 * @param  \Illuminate\Database\QueryException  $e
-	 * @param  string    $query
-	 * @param  array     $bindings
-	 * @param  \Closure  $callback
+	 * @param QueryException  $e
+	 * @param string    $query
+	 * @param array     $bindings
+	 * @param \Closure  $callback
 	 * @return mixed
 	 *
-	 * @throws \Illuminate\Database\QueryException
+	 * @throws QueryException
 	 */
 	protected function tryAgainIfCausedByLostConnection(IlluminateQueryException $e, $query, $bindings, Closure $callback)
 	{
@@ -332,12 +343,12 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Determine if the given exception was caused by a lost connection.
 	 *
-	 * @param  \Illuminate\Database\QueryException
+	 * @param QueryException
 	 * @return bool
 	 */
 	protected function causedByLostConnection(Throwable $e)
 	{
-        return $this->neoeloquent->causedByLostConnection(new QueryException($e));
+		return $this->neoeloquent->causedByLostConnection(new QueryException($e));
 	}
 
 	/**
@@ -347,7 +358,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	 */
 	public function disconnect()
 	{
-        $this->neoeloquent->disconnect();
+		$this->neoeloquent->disconnect();
 	}
 
 	/**
@@ -367,7 +378,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	 *
 	 * @return void
 	 */
-    public function reconnectIfMissingConnection()
+	public function reconnectIfMissingConnection()
 	{
 		$this->neoeloquent->reconnectIfMissingConnection();
 	}
@@ -375,20 +386,20 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Log a query in the connection's query log.
 	 *
-	 * @param  string  $query
-	 * @param  array   $bindings
-	 * @param  float|null  $time
+	 * @param string  $query
+	 * @param array   $bindings
+	 * @param float|null  $time
 	 * @return void
 	 */
 	public function logQuery($query, $bindings, $time = null)
 	{
-        $this->neoeloquent->logQuery($query, $bindings, $time, null);
+		$this->neoeloquent->logQuery($query, $bindings, $time, null);
 	}
 
 	/**
 	 * Register a database query listener with the connection.
 	 *
-	 * @param  \Closure  $callback
+	 * @param \Closure  $callback
 	 * @return void
 	 */
 	public function listen(Closure $callback)
@@ -399,7 +410,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Fire an event for this connection.
 	 *
-	 * @param  string  $event
+	 * @param string  $event
 	 * @return void
 	 */
 	protected function fireConnectionEvent($event)
@@ -410,7 +421,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Get the elapsed time since a given starting point.
 	 *
-	 * @param  int    $start
+	 * @param int    $start
 	 * @return float
 	 */
 	protected function getElapsedTime($start)
@@ -421,7 +432,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Set the reconnect instance on the connection.
 	 *
-	 * @param  callable  $reconnector
+	 * @param callable  $reconnector
 	 * @return $this
 	 */
 	public function setReconnector(callable $reconnector)
@@ -442,7 +453,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Get an option from the configuration options.
 	 *
-	 * @param  string  $option
+	 * @param string  $option
 	 * @return mixed
 	 */
 	public function getConfig($option = null)
@@ -463,7 +474,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Get the query grammar used by the connection.
 	 *
-	 * @return \Illuminate\Database\Query\Grammars\Grammar
+	 * @return Grammar
 	 */
 	public function getQueryGrammar()
 	{
@@ -473,7 +484,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Set the query grammar used by the connection.
 	 *
-	 * @param  \Illuminate\Database\Query\Grammars\Grammar
+	 * @param Grammar
 	 * @return void
 	 */
 	public function setQueryGrammar(Grammar $grammar)
@@ -484,7 +495,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Get the schema grammar used by the connection.
 	 *
-	 * @return \Illuminate\Database\Query\Grammars\Grammar
+	 * @return Grammar
 	 */
 	public function getSchemaGrammar()
 	{
@@ -494,7 +505,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Set the schema grammar used by the connection.
 	 *
-	 * @param  \Illuminate\Database\Schema\Grammars\Grammar
+	 * @param Grammar
 	 * @return void
 	 */
 	public function setSchemaGrammar(SchemaGrammar $grammar)
@@ -505,7 +516,7 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Get the query post processor used by the connection.
 	 *
-	 * @return \Illuminate\Database\Query\Processors\Processor
+	 * @return Processor
 	 */
 	public function getPostProcessor()
 	{
@@ -515,12 +526,12 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 	/**
 	 * Set the query post processor used by the connection.
 	 *
-	 * @param  \Illuminate\Database\Query\Processors\Processor
+	 * @param Processor
 	 * @return void
 	 */
 	public function setPostProcessor(Processor $processor)
 	{
-        $this->neoeloquent->setPostProcessor($processor);
+		$this->neoeloquent->setPostProcessor($processor);
 	}
 
 	/**
@@ -533,12 +544,12 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 		return $this->neoeloquent->getEventDispatcher();
 	}
 
-    /**
-     * @param  IlluminateDispatcher  $events
-     *
-     * @return void
-     */
-    public function setEventDispatcher(IlluminateDispatcher $events)
+	/**
+	 * @param IlluminateDispatcher  $events
+	 *
+	 * @return void
+	 */
+	public function setEventDispatcher(IlluminateDispatcher $events)
 	{
 		$this->neoeloquent->setEventDispatcher(App::make(Dispatcher::class));
 	}
@@ -553,26 +564,28 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 		return $this->neoeloquent->pretending();
 	}
 
-	/**
-	 * Get the default fetch mode for the connection.
-	 *
-	 * @return int
-	 */
-	public function getFetchMode()
-	{
-		return $this->fetchMode;
-	}
+	// /**
+	//  * Get the default fetch mode for the connection.
+	//  *
+	//  * @return int
+	//  */
+	// public function getFetchMode()
+	// {
+	// 	return $this->fetchMode;
+	// }
 
-	/**
-	 * Set the default fetch mode for the connection.
-	 *
-	 * @param  int  $fetchMode
-	 * @return int
-	 */
-	public function setFetchMode($fetchMode, $fetchArgument = null, array $fetchConstructorArgument = [])
-	{
-        $this->neoeloquent->setFetchMode($fetchMode);
-	}
+
+	///**
+	// * Set the default fetch mode for the connection.
+	// *
+	// * @param int  $fetchMode
+	// * @return int
+	// */
+	//
+	//public function setFetchMode($fetchMode, $fetchArgument = null, array $fetchConstructorArgument = [])
+	//{
+	//    $this->neoeloquent->setFetchMode($fetchMode);
+	//}
 
 	/**
 	 * Get the connection query log.
@@ -624,8 +637,8 @@ class ConnectionAdapter extends BaseConnection implements ConnectionInterface
 		return $this->neoeloquent->logging();
 	}
 
-    public function __call($method, $parameters)
-    {
-        call_user_func_array([$this->neoeloquent, $method], $parameters);
-    }
+	public function __call($method, $parameters)
+	{
+		call_user_func_array([$this->neoeloquent, $method], $parameters);
+	}
 }

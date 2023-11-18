@@ -97,7 +97,7 @@ class Builder
 
         if ($this->model->getKeyName() === 'id') {
             // ids are treated differently in neo4j so we have to adapt the query to them.
-            $this->query->where($this->model->getKeyName().'('.$this->query->modelAsNode().')', '=', (int) $id);
+            $this->query->where($this->model->getKeyName() . '(' . $this->query->modelAsNode() . ')', '=', (int) $id);
         } else {
             $this->query->where($this->model->getKeyName(), '=', $id);
         }
@@ -142,7 +142,7 @@ class Builder
             if (count($result) === count(array_unique($id))) {
                 return $result;
             }
-        } elseif (!is_null($result)) {
+        } elseif (! is_null($result)) {
             return $result;
         }
 
@@ -172,7 +172,7 @@ class Builder
      */
     public function firstOrFail($columns = ['*'])
     {
-        if (!is_null($model = $this->first($columns))) {
+        if (! is_null($model = $this->first($columns))) {
             return $model;
         }
 
@@ -325,7 +325,7 @@ class Builder
      */
     protected function addUpdatedAtColumn(array $values)
     {
-        if (!$this->model->usesTimestamps()) {
+        if (! $this->model->usesTimestamps()) {
             return $values;
         }
 
@@ -361,7 +361,7 @@ class Builder
     /**
      * Register a replacement for the default delete function.
      *
-     * @param Closure $callback
+     * @param \Closure $callback
      */
     public function onDelete(Closure $callback)
     {
@@ -447,7 +447,7 @@ class Builder
      *
      * @param array    $models
      * @param string   $name
-     * @param Closure $constraints
+     * @param \Closure $constraints
      *
      * @return array
      */
@@ -485,7 +485,7 @@ class Builder
 
     /**
      * Determines whether the given array includes instances
-     * of \Vinelab\NeoEloquent\Eloquent\Relationship.
+     * of Relationship.
      *
      * @param array $models
      *
@@ -549,7 +549,7 @@ class Builder
         // that start with the given top relations and adds them to our arrays.
         foreach ($this->eagerLoad as $name => $constraints) {
             if ($this->isNested($name, $relation)) {
-                $nested[substr($name, strlen($relation.'.'))] = $constraints;
+                $nested[substr($name, strlen($relation . '.'))] = $constraints;
             }
         }
 
@@ -568,7 +568,7 @@ class Builder
     {
         $dots = Str::contains($name, '.');
 
-        return $dots && Str::startsWith($name, $relation.'.');
+        return $dots && Str::startsWith($name, $relation . '.');
     }
 
     /**
@@ -628,7 +628,7 @@ class Builder
             $resultsByIdentifier = $this->getRecordsByPlaceholders($results);
             $relationships = $this->getRelationshipRecords($results);
 
-            if (!empty($relationships) && !empty($this->mutations)) {
+            if (! empty($relationships) && ! empty($this->mutations)) {
                 $startIdentifier = $this->getStartNodeIdentifier($resultsByIdentifier, $relationships);
                 $endIdentifier = $this->getEndNodeIdentifier($resultsByIdentifier, $relationships);
 
@@ -707,7 +707,7 @@ class Builder
     public function newModelFromNode(Node $node, Model $model, $connection = null)
     {
         // let's begin with a proper connection
-        if (!$connection) {
+        if (! $connection) {
             $connection = $model->getConnectionName();
         }
 
@@ -739,10 +739,10 @@ class Builder
     {
         $models = [];
 
-        if (!$results->isEmpty()) {
+        if (! $results->isEmpty()) {
             $grammar = $this->getQuery()->getGrammar();
 
-//            $nodesByIdentifier = $results->getAllByIdentifier();
+            //            $nodesByIdentifier = $results->getAllByIdentifier();
 //
 //            foreach ($nodesByIdentifier as $identifier => $nodes) {
 //                // Now that we have the attributes, we first check for mutations
@@ -772,10 +772,10 @@ class Builder
                 // and if exists, we will need to mutate the attributes accordingly.
                 if ($this->shouldMutate($placeholder)) {
                     $cropped = $grammar->cropLabelIdentifier($placeholder);
-//                    $attributes = $record->values();
+                    //                    $attributes = $record->values();
 
                     foreach ($records as $record) {
-                        if (!isset($models[$cropped])) {
+                        if (! isset($models[$cropped])) {
                             $models[$cropped] = [];
                         }
 
@@ -807,7 +807,7 @@ class Builder
         foreach ($attributes as $mutation => $values) {
             // First we should see whether this mutation can be resolved so that
             // we take it into consideration otherwise we skip to the next iteration.
-            if (!$this->resolvableMutation($mutation)) {
+            if (! $this->resolvableMutation($mutation)) {
                 continue;
             }
             // Since this mutation should be resolved by us then we check whether it is
@@ -874,7 +874,7 @@ class Builder
             // we need the model attributes though we might receive a nested
             // array that includes them on level 2 so we check
             // whether what we have is the array of attrs
-            if (!Helpers::isAssocArray($attributesByLabel[$label])) {
+            if (! Helpers::isAssocArray($attributesByLabel[$label])) {
                 $attributes = current($attributesByLabel[$label]);
                 if ($attributes instanceof Node) {
                     $attributes = $this->getNodeAttributes($attributes);
@@ -956,7 +956,7 @@ class Builder
 
                     // as already assigned, RETURNed props will be preceded by an 'n.'
                     // representing the node we're targeting.
-                    $returned = $this->query->modelAsNode().".{$property}";
+                    $returned = $this->query->modelAsNode() . ".{$property}";
 
                     $value = $row[$returned];
                 }
@@ -970,8 +970,8 @@ class Builder
 
             // WARNING: Do this after setting all the attributes to avoid overriding it
             // with a null value or colliding it with something else, some Daenerys dragons maybe ?!
-            if (!is_null($columns) && in_array('id', $columns)) {
-                $attributes['id'] = $row['id('.$this->query->modelAsNode().')'];
+            if (! is_null($columns) && in_array('id', $columns)) {
+                $attributes['id'] = $row['id(' . $this->query->modelAsNode() . ')'];
             }
         } elseif ($result instanceof Node) {
             $attributes = $this->getNodeAttributes($result);
@@ -1206,7 +1206,7 @@ class Builder
      */
     public function isMorphMutation($mutation)
     {
-        if (!is_array($mutation) && isset($this->mutations[$mutation])) {
+        if (! is_array($mutation) && isset($this->mutations[$mutation])) {
             $mutation = $this->getMutation($mutation);
         }
 
@@ -1293,7 +1293,8 @@ class Builder
      */
     public function getMorphMutations()
     {
-        return array_filter($this->getMutations(), function ($mutation) { return $this->isMorphMutation($mutation); });
+        return array_filter($this->getMutations(), function ($mutation) {
+            return $this->isMorphMutation($mutation); });
     }
 
     /**
@@ -1321,7 +1322,7 @@ class Builder
             return true;
         });
 
-        return  count($matched) > 1 ? true : false;
+        return count($matched) > 1 ? true : false;
     }
 
     /**
@@ -1331,7 +1332,7 @@ class Builder
      * @param string   $operator
      * @param int      $count
      * @param string   $boolean
-     * @param Closure $callback
+     * @param \Closure $callback
      *
      * @return Builder|static
      */
@@ -1371,7 +1372,7 @@ class Builder
              *
              * Which is the result of Post::has('comments', '>=', 10)->get();
              */
-            $countPart = $prefix.'_count';
+            $countPart = $prefix . '_count';
             $this->carry([$relation->getParentNode(), "count($prefix)" => $countPart]);
             $this->whereCarried($countPart, $operator, $count);
         }
@@ -1417,7 +1418,7 @@ class Builder
      * @param string        $operator
      * @param int           $count
      * @param string        $boolean
-     * @param Closure|null $callback
+     * @param \Closure|null $callback
      *
      * @return Builder|static
      */
@@ -1444,7 +1445,7 @@ class Builder
      *
      * @param string        $relation
      * @param string        $boolean
-     * @param Closure|null $callback
+     * @param \Closure|null $callback
      *
      * @return Builder|static
      */
@@ -1457,7 +1458,7 @@ class Builder
      * Add a relationship count condition to the query with where clauses.
      *
      * @param string   $relation
-     * @param Closure $callback
+     * @param \Closure $callback
      * @param string   $operator
      * @param int      $count
      *
@@ -1486,7 +1487,7 @@ class Builder
      * Add a relationship count condition to the query with where clauses.
      *
      * @param string        $relation
-     * @param Closure|null $callback
+     * @param \Closure|null $callback
      *
      * @return Builder|static
      */
@@ -1499,7 +1500,7 @@ class Builder
      * Add a relationship count condition to the query with where clauses and an "or".
      *
      * @param string   $relation
-     * @param Closure $callback
+     * @param \Closure $callback
      * @param string   $operator
      * @param int      $count
      *
@@ -1529,7 +1530,7 @@ class Builder
             $count = new Expression($count);
         }
 
-        return $this->where(new Expression('('.$hasQuery->toCypher().')'), $operator, $count, $boolean);
+        return $this->where(new Expression('(' . $hasQuery->toCypher() . ')'), $operator, $count, $boolean);
     }
 
     /**
@@ -1604,7 +1605,7 @@ class Builder
             // constraints have been specified for the eager load and we'll just put
             // an empty Closure with the loader so that we can treat all the same.
             if (is_numeric($name)) {
-                $f = function () {};
+                $f = function () { };
 
                 list($name, $constraints) = [$constraints, $f];
             }
@@ -1638,8 +1639,8 @@ class Builder
         foreach (explode('.', $name) as $segment) {
             $progress[] = $segment;
 
-            if (!isset($results[$last = implode('.', $progress)])) {
-                $results[$last] = function () {};
+            if (! isset($results[$last = implode('.', $progress)])) {
+                $results[$last] = function () { };
             }
         }
 
@@ -1739,7 +1740,7 @@ class Builder
      * Extend the builder with a given callback.
      *
      * @param string   $name
-     * @param Closure $callback
+     * @param \Closure $callback
      */
     public function macro($name, Closure $callback)
     {
@@ -1794,8 +1795,8 @@ class Builder
         foreach ($relations as $relation => $values) {
             $name = $relation;
             // Get the relation by calling the model's relationship function.
-            if (!method_exists($this->model, $relation)) {
-                throw new QueryException("The relation method $relation() does not exist on ".get_class($this->model));
+            if (! method_exists($this->model, $relation)) {
+                throw new QueryException("The relation method $relation() does not exist on " . get_class($this->model));
             }
 
             $relationship = $this->model->$relation();
@@ -1808,8 +1809,8 @@ class Builder
             // this is probably a One-To-One relationship or the dev decided not to add
             // multiple records as relations so we'll wrap it up in an array.
             if (
-                (!is_array($values) || Helpers::isAssocArray($values) || $values instanceof Model)
-                && !($values instanceof Collection)
+                (! is_array($values) || Helpers::isAssocArray($values) || $values instanceof Model)
+                && ! ($values instanceof Collection)
             ) {
                 $values = [$values];
             }
@@ -1839,7 +1840,7 @@ class Builder
                 // Or in the case where the attributes are neither an array nor a model instance
                 // then this is assumed to be the model Id that the dev means to attach and since
                 // Neo4j node Ids are always an int then we take that as a value.
-                elseif (!is_array($value) && !$value instanceof Model) {
+                elseif (! is_array($value) && ! $value instanceof Model) {
                     $attach[] = $value;
                 }
                 // In this case the record is considered to be new to the market so let's create it.
@@ -1855,7 +1856,7 @@ class Builder
         $results = $this->query->createWith($model, $related);
         $models = $this->resultsToModelsWithRelations($this->model->getConnectionName(), $results);
 
-        return (!empty($models)) ? $models : null;
+        return (! empty($models)) ? $models : null;
     }
 
     /**
@@ -1923,7 +1924,7 @@ class Builder
                 $where['query']->wheres = $this->prefixWheres($where['query']->wheres, $prefix);
             } else if ($where['type'] != 'Carried' && strpos($where['column'], '.') == false) {
                 $column = $where['column'];
-                $where['column'] = ($this->isId($column)) ? $column : $prefix.'.'.$column;
+                $where['column'] = ($this->isId($column)) ? $column : $prefix . '.' . $column;
             }
 
             return $where;
@@ -1951,7 +1952,7 @@ class Builder
      */
     protected function getMatchMethodName($relation)
     {
-        return 'match'.ucfirst(mb_strtolower($relation->getEdgeDirection()));
+        return 'match' . ucfirst(mb_strtolower($relation->getEdgeDirection()));
     }
 
     /**
@@ -1968,7 +1969,7 @@ class Builder
             array_unshift($parameters, $this);
 
             return call_user_func_array($this->macros[$method], $parameters);
-        } elseif (method_exists($this->model, $scope = 'scope'.ucfirst($method))) {
+        } elseif (method_exists($this->model, $scope = 'scope' . ucfirst($method))) {
             return $this->callScope($scope, $parameters);
         }
 

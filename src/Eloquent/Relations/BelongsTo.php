@@ -44,7 +44,7 @@ class BelongsTo extends OneRelation
              *          return $this->belongsTo('User', 'PHONE');
              *     }
              * }
-            */
+             */
 
             // Get the parent node's placeholder.
             $parentNode = $this->query->getQuery()->modelAsNode($this->parent->nodeLabel());
@@ -99,14 +99,14 @@ class BelongsTo extends OneRelation
     /**
      * Get an instance of the EdgeIn relationship.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $model
+     * @param Model $model
      * @param array                               $attributes
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\EdgeIn
+     * @return EdgeIn
      */
     public function getEdge(Model $model = null, $attributes = array())
     {
-        $model = (!is_null($model)) ? $model : $this->parent->{$this->relation};
+        $model = (! is_null($model)) ? $model : $this->parent->{$this->relation};
 
         // Indicate a unique relation since this only involves one other model.
         $unique = true;

@@ -23,7 +23,7 @@ class Exception extends RuntimeException
     /**
      * The driver's error.
      *
-     * @var Neoxygen\NeoClient\Exception\*
+     * @var mixed
      */
     protected $exception;
 

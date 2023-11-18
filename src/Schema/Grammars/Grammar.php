@@ -17,7 +17,7 @@ class Grammar extends IlluminateSchemaGrammar
     {
         // every label must begin with a ':' so we need to check
         // and reformat if need be.
-        return trim(':`'.preg_replace('/^:/', '', $label).'`');
+        return trim(':`' . preg_replace('/^:/', '', $label) . '`');
     }
 
     /**

@@ -16,14 +16,14 @@ abstract class Delegate
     /**
      * The Eloquent builder instance.
      *
-     * @var \Vinelab\NeoEloquent\Eloquent\Builder
+     * @var Builder
      */
     protected $query;
 
     /**
      * The database connection.
      *
-     * @var \Vinelab\NeoEloquent\Connection
+     * @var Connection
      */
     protected $connection;
 
@@ -37,8 +37,8 @@ abstract class Delegate
     /**
      * Create a new delegate instance.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Builder $query
-     * @param \Vinelab\NeoEloquent\Eloquent\Model   $parent
+     * @param Builder $query
+     * @param Model   $parent
      */
     public function __construct(Builder $query)
     {
@@ -53,7 +53,7 @@ abstract class Delegate
     /**
      * Get a new Finder instance.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Finder
+     * @return Finder
      */
     public function newFinder()
     {
@@ -98,7 +98,7 @@ abstract class Delegate
     /**
      * Get the model's attributes as query-able properties.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $model
+     * @param Model $model
      *
      * @return array
      */
@@ -117,8 +117,8 @@ abstract class Delegate
      * Make a new Relationship instance.
      *
      * @param string                              $type
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $startModel
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $endModel
+     * @param Model $startModel
+     * @param Model $endModel
      * @param array                               $properties
      *
      * @return Relationship
@@ -143,8 +143,8 @@ abstract class Delegate
     /**
      * Get the direct relation between two models.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $parentModel
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $relatedModel
+     * @param Model $parentModel
+     * @param Model $relatedModel
      * @param string                              $direction
      *
      * @return \Everyman\Neo4j\Relationship
@@ -165,11 +165,11 @@ abstract class Delegate
      * @param string $direction
      * @return CypherList
      */
-    public function firstRelationWithNodes(Model $parentModel, Model $relatedModel, $type, $direction = 'any'): CypherList
+    public function firstRelationWithNodes(Model $parentModel, Model $relatedModel, $type, $direction = 'any') : CypherList
     {
         $this->type = $type;
         $this->start = $this->asNode($parentModel);
-//        $this->end = $this->asNode($relatedModel);
+        //        $this->end = $this->asNode($relatedModel);
         $this->direction = $direction;
         // To get a relationship between two models we will have
         // to find the Path between them so first let's transform
@@ -204,7 +204,7 @@ abstract class Delegate
      *
      * @return bool
      *
-     * @throws \Vinelab\NeoEloquent\QueryException If no open batch to commit.
+     * @throws QueryException If no open batch to commit.
      */
     public function commitBatch()
     {
@@ -227,7 +227,7 @@ abstract class Delegate
      * @deprecated 2.0 No longer using Everyman's Relationship to get the value
      *                   of the direction constant
      *
-     * @throws \Vinelab\NeoEloquent\Exceptions\UnknownDirectionException If the specified $direction is not one of in, out or inout
+     * @throws Exceptions\UnknownDirectionException If the specified $direction is not one of in, out or inout
      */
     public function getRealDirection($direction)
     {
@@ -245,7 +245,7 @@ abstract class Delegate
      *
      * @return Node
      */
-    public function asNode(Model $model): ?Node
+    public function asNode(Model $model) : ?Node
     {
         $id = $model->getKey();
         $properties = $model->toArray();
@@ -262,7 +262,7 @@ abstract class Delegate
     /**
      * Get the NeoEloquent connection for this relation.
      *
-     * @return \Vinelab\NeoEloquent\Connection
+     * @return Connection
      */
     public function getConnection()
     {
@@ -272,7 +272,7 @@ abstract class Delegate
     /**
      * Set the database connection.
      *
-     * @param \Vinelab\NeoEloquent\Connection $name
+     * @param Connection $name
      */
     public function setConnection(Connection $connection)
     {

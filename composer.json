@@ -32,6 +32,7 @@
         "laudis/neo4j-php-client": "^3.0"
     },
     "require-dev": {
+        "laravel/framework": "^10.0",
         "mockery/mockery": "~1.6.0",
         "phpunit/phpunit": "^10.0",
         "symfony/var-dumper": "*",

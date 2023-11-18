@@ -83,7 +83,7 @@ class MorphTo extends OneRelation
      * Match the eagerly loaded results to their parents.
      *
      * @param array                                    $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param Collection $results
      * @param string                                   $relation
      *
      * @return array
@@ -107,14 +107,14 @@ class MorphTo extends OneRelation
     /**
      * Get an instance of the EdgeIn relationship.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Model $model
+     * @param Model $model
      * @param array                               $attributes
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\EdgeOut
+     * @return EdgeOut
      */
     public function getEdge(Model $model = null, $attributes = array())
     {
-        $model = (!is_null($model)) ? $model : $this->parent->{$this->relation};
+        $model = (! is_null($model)) ? $model : $this->parent->{$this->relation};
 
         // Indicate a unique relationship since this involves one other model.
         $unique = true;

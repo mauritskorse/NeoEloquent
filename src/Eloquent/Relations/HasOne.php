@@ -61,7 +61,7 @@ class HasOne extends HasOneOrMany
              *          return $this->hasOne('Phone', 'PHONE');
              *     }
              * }
-            */
+             */
 
             // Get the parent node's placeholder.
             $parentNode = $this->query->getQuery()->modelAsNode($this->parent->nodeLabel());
@@ -116,16 +116,16 @@ class HasOne extends HasOneOrMany
     /**
      * Get an instance of the EdgeIn relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      * @param array                               $attributes
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\EdgeOut
+     * @return EdgeOut
      */
     public function getEdge(Model $model = null, $attributes = array())
     {
-        $model = (!is_null($model)) ? $model : $this->related;
+        $model = (! is_null($model)) ? $model : $this->related;
 
-       // Indicate a unique relation since this only involves one other model.
+        // Indicate a unique relation since this only involves one other model.
         $unique = true;
 
         return new EdgeOut($this->query, $this->parent, $model, $this->type, $attributes, $unique);
@@ -135,9 +135,9 @@ class HasOne extends HasOneOrMany
      * Get the edge between the parent model and the given model or
      * the related model determined by the relation function name.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In,Out, etc.]
+     * @return Edge[In|Out]
      */
     public function edge(Model $model = null)
     {
@@ -148,7 +148,7 @@ class HasOne extends HasOneOrMany
      * Match the eagerly loaded results to their parents.
      *
      * @param array                                    $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param Collection $results
      * @param string                                   $relation
      *
      * @return array

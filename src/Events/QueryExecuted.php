@@ -28,14 +28,14 @@ class QueryExecuted
     /**
      * The databse connection instance.
      *
-     * @var \Illuminate\Database\Connection
+     * @var Connection
      */
     public $connection;
 
     /**
      * The database connection name.
      *
-     * @var \Illuminate\Database\Connection
+     * @var Connection
      */
     public $connectionName;
 

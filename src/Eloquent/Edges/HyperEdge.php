@@ -13,7 +13,7 @@ class HyperEdge extends Edge
      * The morph Model instance
      * representing the 3rd Node of the relationship.
      *
-     * @var \Vinelab\NeoEloquent\Eloquent\Model
+     * @var Model
      */
     protected $morph;
 
@@ -28,33 +28,33 @@ class HyperEdge extends Edge
     /**
      * The left side Edge of the relationship.
      *
-     * @var \Vinelab\NeoEloquent\Eloquent\Edges\EdgeOut
+     * @var EdgeOut
      */
     protected $left;
 
     /**
      * The right side Edge of the relationship.
      *
-     * @var \Vinelab\NeoEloquent\Eloquent\Edges\EdgeOut
+     * @var EdgeOut
      */
     protected $right;
 
     /**
      * The Hyper node of the relationship (sits in the middle b/w start and end).
      *
-     * @var \Everyman\Neo4j\Node
+     * @var Node
      */
     protected $hyper;
 
     /**
      * Create a new HyperEdge instance.
      *
-     * @param Vinelab\NeoEloquent\Eloquent\Builder $query
-     * @param Vinelab\NeoEloquent\Eloquent\Model   $parent
+     * @param Builder $query
+     * @param Model   $parent
      * @param string                               $type
-     * @param Vinelab\NeoEloquent\Eloquent\Model   $related
+     * @param Model   $related
      * @param string                               $morphType
-     * @param Vinelab\NeoEloquent\Eloquent\Model   $morph
+     * @param Model   $morph
      */
     public function __construct(Builder $query, Model $parent, $type, Model $related, $morphType, Model $morph, $attributes = array())
     {
@@ -71,7 +71,7 @@ class HyperEdge extends Edge
      * Initialize the relationship by setting up nodes and edges,.
      *
      *
-     * @throws \Vinelab\NeoEloquent\NoEdgeDirectionException If $direction is not set on the inheriting relation.
+     * @throws NoEdgeDirectionException If $direction is not set on the inheriting relation.
      */
     public function initRelation()
     {
@@ -93,7 +93,7 @@ class HyperEdge extends Edge
     /**
      * Get the left side Edge of this relationship.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\EdgeOut
+     * @return EdgeOut
      */
     public function left()
     {
@@ -103,7 +103,7 @@ class HyperEdge extends Edge
     /**
      * Set the left side Edge of this relation.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Edges\Edge $left
+     * @param Edge $left
      */
     public function setLeft($left)
     {
@@ -113,7 +113,7 @@ class HyperEdge extends Edge
     /**
      * Get the right side Edge of this relationship.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\EdgeOut
+     * @return EdgeOut
      */
     public function right()
     {
@@ -123,7 +123,7 @@ class HyperEdge extends Edge
     /**
      * Set the right side Edge of this relationship.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Edges\Edge $right
+     * @param Edge $right
      */
     public function setRight($right)
     {
@@ -133,7 +133,7 @@ class HyperEdge extends Edge
     /**
      * Get the hyper model of the relationship.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Model
+     * @return \Model
      */
     public function hyper()
     {

@@ -17,14 +17,14 @@ class Manager
     /**
      * The database manager instance.
      *
-     * @var \Illuminate\Database\DatabaseManager
+     * @var DatabaseManager
      */
     protected $manager;
 
     /**
      * Create a new database capsule manager.
      *
-     * @param \Illuminate\Container\Container|null $container
+     * @param Container|null $container
      */
     public function __construct(Container $container = null)
     {
@@ -61,7 +61,7 @@ class Manager
      *
      * @param string $connection
      *
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      */
     public static function connection($connection = null)
     {
@@ -74,7 +74,7 @@ class Manager
      * @param string $table
      * @param string $connection
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Query\Builder
      */
     public static function table($table, $connection = null)
     {
@@ -86,7 +86,7 @@ class Manager
      *
      * @param string $connection
      *
-     * @return \Illuminate\Database\Schema\Builder
+     * @return Schema\Builder
      */
     public static function schema($connection = null)
     {
@@ -98,7 +98,7 @@ class Manager
      *
      * @param string $name
      *
-     * @return \Illuminate\Database\Connection
+     * @return Connection
      */
     public function getConnection($name = null)
     {
@@ -152,7 +152,7 @@ class Manager
     /**
      * Get the database manager instance.
      *
-     * @return \Illuminate\Database\DatabaseManager
+     * @return DatabaseManager
      */
     public function getDatabaseManager()
     {
@@ -162,7 +162,7 @@ class Manager
     /**
      * Get the current event dispatcher instance.
      *
-     * @return \Illuminate\Contracts\Events\Dispatcher|null
+     * @return Dispatcher|null
      */
     public function getEventDispatcher()
     {
@@ -174,7 +174,7 @@ class Manager
     /**
      * Set the event dispatcher instance to be used by connections.
      *
-     * @param \Illuminate\Contracts\Events\Dispatcher $dispatcher
+     * @param Dispatcher $dispatcher
      */
     public function setEventDispatcher(Dispatcher $dispatcher)
     {

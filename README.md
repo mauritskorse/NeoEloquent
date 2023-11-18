@@ -6,16 +6,16 @@ Neo4j Graph Eloquent Driver for Laravel.
 
 ## Quick Reference
 
- - [Installation](#installation)
- - [Configuration](#configuration)
- - [Models](#models)
- - [Relationships](#relationships)
- - [Edges](#edges)
- - [Migration](#migration)
- - [Schema](#schema)
- - [Aggregates](#aggregates)
- - [Only in Neo](#only-in-neo)
- - [Things To Avoid](#avoid)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Models](#models)
+- [Relationships](#relationships)
+- [Edges](#edges)
+- [Migration](#migration)
+- [Schema](#schema)
+- [Aggregates](#aggregates)
+- [Only in Neo](#only-in-neo)
+- [Things To Avoid](#avoid)
 
 ## Installation
 
@@ -43,6 +43,7 @@ the `Model` class to `NeoEloquent` so you can simply `extend NeoEloquent` in you
 ## Configuration
 
 ### Connection
+
 in `app/config/database.php` or in case of an environment-based configuration `app/config/[env]/database.php`
 make `neo4j` your default connection:
 
@@ -74,7 +75,6 @@ If you're willing to have migrations:
 - modify `composer.json` and add `app/database/labels` to the `classmap` array
 - run `composer dump-autoload`
 
-
 ### Documentation
 
 ## Models
@@ -92,6 +92,7 @@ As simple as it is, NeoEloquent will generate the default node label from the cl
 in this case it will be `:User`. Read about [node labels here](http://docs.neo4j.org/chunked/stable/rest-api-node-labels.html)
 
 ### Namespaced Models
+
 When you use namespaces with your models the label will consider the full namespace.
 
 ```php
@@ -174,9 +175,10 @@ class User extends NeoEloquent {
         return $this->hasOne('Phone');
     }
 ```
+
 This represents an `OUTGOING` relationship direction from the `:User` node to a `:Phone`.
 
-##### Saving
+#### Saving
 
 ```php
 $phone = new Phone(['code' => 961, 'number' => '98765432'])
@@ -185,14 +187,14 @@ $relation = $user->phone()->save($phone);
 
 The Cypher performed by this statement will be as follows:
 
-```
+```cypher
 MATCH (user:`User`)
 WHERE id(user) = 1
 CREATE (user)-[:PHONE]->(phone:`Phone` {code: 961, number: '98765432', created_at: 7543788, updated_at: 7543788})
 RETURN phone;
 ```
 
-##### Defining The Inverse Of This Relation
+#### Defining The Inverse Of This Relation
 
 ```php
 class Phone extends NeoEloquent {
@@ -207,11 +209,11 @@ class Phone extends NeoEloquent {
 This represents an `INCOMING` relationship direction from
 the `:User` node to this `:Phone` node.
 
-##### Associating Models
+#### Associating Models
 
 Due to the fact that we do not deal with **foreign keys**, in our case it is much
 more than just setting the foreign key attribute on the parent model. In Neo4j (and Graph in general) a relationship is an entity itself that can also have attributes of its own, hence the introduction of
-[**Edges**](#Edges)
+[**Edges**](#edges)
 
 > *Note:* Associated models does not persist relations automatically when calling `associate()`.
 
@@ -227,7 +229,7 @@ $relation->save();
 
 The Cypher performed by this statement will be as follows:
 
-```
+```cypher
 MATCH (account:`Account`), (user:`User`)
 WHERE id(account) = 1986 AND id(user) = 9862
 MERGE (account)<-[rel_user_account:ACCOUNT]-(user)
@@ -260,14 +262,14 @@ Similar to `One-To-One` relationships the returned value from a `save()` stateme
 
 The Cypher performed by this statement will be as follows:
 
-```
+```cypher
 MATCH (user:`User`)
 WHERE id(user) = 1
 CREATE (user)-[rel_user_post:POSTED]->(post:`Post` {title: 'The Title', body: 'Hot Body', created_at: '15-05-2014', updated_at: '15-05-2014'})
 RETURN rel_user_post;
 ```
 
-##### Defining The Inverse Of This Relation
+#### Defining The Inverse Of This Relation
 
 ```php
 class Post extends NeoEloquent {
@@ -317,7 +319,7 @@ $jd->followers()->attach(1013); // 1013 being the id of $mc ($mc->getKey())
 
 The Cypher performed by this statement will be as follows:
 
-```
+```cypher
 MATCH (user:`User`), (followers:`User`)
 WHERE id(user) = 1012 AND id(followers) = 1013
 CREATE (followers)-[:FOLLOWS]->(user)
@@ -332,7 +334,7 @@ $mc->followers()->save($jd);
 
 The Cypher performed by this statement will be as follows:
 
-```
+```cypher
 MATCH (user:`User`), (followers:`User`)
 WHERE id(user) = 1013 AND id(followers) = 1012
 CREATE (user)-[rel_user_followers:FOLLOWS]->(followers)
@@ -347,7 +349,7 @@ $followers = $jd->followers;
 
 The Cypher performed by this statement will be as follows:
 
-```
+```cypher
 MATCH (user:`User`), (followers:`User`), (user)-[rel_user_followers:FOLLOWS]-(followers)
 WHERE id(user) = 1012
 RETURN rel_follows;
@@ -576,7 +578,7 @@ foreach (Book::with('author')->get() as $book)
 
 Only two Cypher queries will be run in the loop above:
 
-```
+```cypher
 MATCH (book:`Book`) RETURN *;
 
 MATCH (book:`Book`), (book)<-[:WROTE]-(author:`Author`) WHERE id(book) IN [1, 2, 3, 4, 5, ...] RETURN book, author;
@@ -815,7 +817,7 @@ Post::createWith(['title' => 'the title', 'body' => 'the body'], [
 
 The Cypher query performed by the example above is:
 
-```
+```cypher
 CREATE (post:`Post` {title: 'the title', body: 'the body'}),
 (post)-[:PHOTO]->(:`Photo` {url: 'http://url', caption: '...', metadata: '...'}),
 (post)-[:PHOTO]->(:`Photo` {url: 'http://other', caption: 'the bay', metadata: '...'}),
@@ -881,7 +883,7 @@ Post::createWith(['title' => 'foo', 'body' => 'bar'], ['tags' => 1, 'privacy' =>
 
 The Cypher for the query that attaches records would be:
 
-```
+```cypher
 CREATE (post:`Post` {title: 'foo', 'body' => 'bar'})
 WITH post
 MATCH (tag:`Tag`)
@@ -889,8 +891,8 @@ WHERE id(tag) IN [1, 2]
 CREATE (post)-[:TAG]->(tag);
 ```
 
-
 ## Migration
+
 For migrations to work please perform the following:
 
 - create the folder `app/database/labels`
@@ -899,7 +901,8 @@ For migrations to work please perform the following:
 Since Neo4j is a schema-less database you don't need to predefine types of properties for labels.
 However you will be able to perform [Indexing](http://neo4j.com/docs/stable/query-schema-index.html) and [Constraints](http://neo4j.com/docs/stable/query-constraints.html) using NeoEloquent's pain-less [Schema](#schema).
 
-#### Commands
+### Commands
+
 NeoEloquent introduces new commands under the `neo4j` namespace so you can still use Eloquent's migration commands side-by-side.
 
 Migration commands are the same as those of Eloquent, in the form of `neo4j:migrate[:command]`
@@ -909,7 +912,6 @@ Migration commands are the same as those of Eloquent, in the form of `neo4j:migr
     neo4j:migrate:reset                  Rollback all database migrations
     neo4j:migrate:refresh                Reset and re-run all migrations
     neo4j:migrate:rollback               Rollback the last database migration
-
 
 ### Creating Migrations
 
@@ -925,18 +927,17 @@ You can add additional options to commands like:
     php artisan neo4j:make:migration create_user_label --create=User
     php artisan neo4j:make:migration create_user_label --label=User
 
-
 ### Running Migrations
 
-##### Run All Outstanding Migrations
+#### Run All Outstanding Migrations
 
     php artisan neo4j:migrate
 
-##### Run All Outstanding Migrations For A Path
+#### Run All Outstanding Migrations For A Path
 
     php artisan neo4j:migrate --path=app/foo/labels
 
-##### Run All Outstanding Migrations For A Package
+#### Run All Outstanding Migrations For A Package
 
     php artisan neo4j:migrate --package=vendor/package
 
@@ -965,6 +966,7 @@ To force-run migrations on a production database you can use:
     php artisan neo4j:migrate:refresh --seed
 
 ## Schema
+
 NeoEloquent will alias the `Neo4jSchema` facade automatically for you to be used in manipulating labels.
 
 ```php
@@ -1040,7 +1042,7 @@ Check [the docs](http://docs.neo4j.org/chunked/stable/query-aggregation.html) fo
 
 > `table()` represents the label of the model
 
-```
+```php
 $users = DB::table('User')->count();
 
 $distinct = DB::table('User')->countDistinct('points');
@@ -1065,6 +1067,7 @@ $emails = DB::table('User')->collect('email');
 ```
 
 ## Changelog
+
 Check the [Releases](https://github.com/Vinelab/NeoEloquent/releases) for details.
 
 ## Avoid
@@ -1078,6 +1081,7 @@ Which makes them unsupported on purpose. If migrating from an `SQL`-based app
 they will be your boogie monster.
 
 ### Pivot Tables in Many-To-Many Relationships
+
 This is not supported, instead we will be using [Edges](#edges) to work with relationships between models.
 
 ### Nested Arrays and Objects
@@ -1104,8 +1108,8 @@ Check out the [createWith()](#createwith) method on how you can achieve this in 
 check included messages for more info.
 
 ## Factories
- 
+
   > You can use default Laravel `factory()` helper for NeoEloquent models too.
 
- - define needed factories inside `database/factories/`(read more)[https://laravel.com/docs/5.6/database-testing#writing-factories];
- - use `factory()` in the same style as default Laravel `factory()`.
+- define needed factories inside `database/factories/`[read more](https://laravel.com/docs/5.6/database-testing#writing-factories);
+- use `factory()` in the same style as default Laravel `factory()`.

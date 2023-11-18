@@ -33,7 +33,7 @@ function showFirstMovieWithActorsLazyLoaded()
 /**
  * Show only the actors whose names end with the given letter.
  *
- * @param  string $letter
+ * @param string $letter
  */
 function showActorsWithNameEndingWith($letter)
 {

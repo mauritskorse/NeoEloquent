@@ -22,7 +22,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
     /**
      * The relationships finder instance.
      *
-     * @var \Vinelab\NeoEloquent\Eloquent\Edges\Finder
+     * @var Finder
      */
     protected $finder;
 
@@ -34,10 +34,21 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
     protected $edgeDirection = 'out';
 
     /**
+     * @var
+     */
+    protected $localKey;
+
+    /**
+     * @var
+     */
+    protected $type;
+
+
+    /**
      * Create a new has many relationship instance.
      *
-     * @param \Vinelab\NeoEloquent\Eloquent\Builder $query
-     * @param \Vinelab\NeoEloquent\Eloquent\Model   $parent
+     * @param Builder $query
+     * @param Model   $parent
      * @param string                                $type
      */
     public function __construct(Builder $query, Model $parent, $type, $key, $relation)
@@ -124,10 +135,10 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
     /**
      * Get an instance of the Edge[In, Out, etc.] relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      * @param array                               $attributes
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In,Out, etc.]
+     * @return Edge[In,Out, etc.]
      */
     abstract public function getEdge(Model $model = null, $attributes = array());
 
@@ -135,9 +146,9 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      * Get the edge between the parent model and the given model or
      * the related model determined by the relation function name.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In,Out, etc.]
+     * @return Edge[In,Out, etc.]
      */
     public function edge(Model $model = null)
     {
@@ -147,7 +158,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
     /**
      * Get all the edges of the given type and direction.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In|Out]
+     * @return Edge[In|Out]
      */
     public function edges()
     {
@@ -158,7 +169,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      * Match the eagerly loaded results to their single parents.
      *
      * @param array                                    $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param Collection $results
      * @param string                                   $relation
      *
      * @return array
@@ -172,7 +183,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      * Match the eagerly loaded results to their many parents.
      *
      * @param array                                    $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param Collection $results
      * @param string                                   $relation
      *
      * @return array
@@ -186,7 +197,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      * Match the eagerly loaded results to their parents.
      *
      * @param array                                    $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param Collection $results
      * @param string                                   $relation
      *
      * @return array
@@ -326,7 +337,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param Collection $results
      *
      * @return array
      */
@@ -349,10 +360,10 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
     /**
      * Attach a model instance to the parent model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param Model $model
      * @param array                               $properties The relationship properites
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Edge[In, Out, etc.]
+     * @return Edge[In, Out, etc.]
      */
     public function save(Model $model, array $properties = array())
     {
@@ -392,7 +403,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      * @param array $attributes
      * @param array $properties The relationship properites
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Model
+     * @return Model
      */
     public function create(array $attributes = [], array $properties = array())
     {
@@ -452,7 +463,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
              *          return $this->hasOne('Phone', 'PHONE');
              *     }
              * }
-            */
+             */
 
             // Get the parent node's placeholder.
             $parentNode = $this->getParentNode();
@@ -463,7 +474,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
             // Build the MATCH ()-[]->() Cypher clause.
             $this->query->matchOut($this->parent, $this->related, $this->relation, $this->type, $this->localKey, $this->parent->{$this->localKey});
             // Add WHERE clause over the parent node's matching key = value.
-            $this->query->where($parentNode.'.'.$this->localKey, '=', $this->parent->{$this->localKey});
+            $this->query->where($parentNode . '.' . $this->localKey, '=', $this->parent->{$this->localKey});
         }
     }
 
@@ -482,7 +493,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
             $models = [$id];
         } elseif ($id instanceof Collection) {
             $models = $id->all();
-        } elseif (!$this->isArrayOfModels($id)) {
+        } elseif (! $this->isArrayOfModels($id)) {
             $models = $this->modelsFromIds($id);
             // In case someone is messing with us and passed a bunch of ids (or single id)
             // that do not exist we slap them in the face with a ModelNotFoundException.
@@ -501,7 +512,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
             $this->touchIfTouching();
         }
 
-        return (!is_array($id)) ? $saved->first() : $saved;
+        return (! is_array($id)) ? $saved->first() : $saved;
     }
 
     /**
@@ -514,9 +525,9 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      */
     public function detach($id = array(), $touch = true)
     {
-        if (!$id instanceof Model and !$id instanceof Collection) {
+        if (! $id instanceof Model and ! $id instanceof Collection) {
             $id = $this->modelsFromIds($id);
-        } elseif (!is_array($id)) {
+        } elseif (! is_array($id)) {
             $id = [$id];
         }
 
@@ -535,7 +546,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
             $this->touchIfTouching();
         }
 
-        return !in_array(false, $results);
+        return ! in_array(false, $results);
     }
 
     public function delete($shouldKeepEndNode = false)
@@ -546,7 +557,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
     /**
      * Sync the intermediate tables with a list of IDs or collection of models.
      *
-     * @param  $ids
+     * @param $ids
      * @param bool $detaching
      *
      * @return array
@@ -560,7 +571,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
         // get them as collection
         if ($ids instanceof Collection) {
             $ids = $ids->modelKeys();
-        } elseif (!is_array($ids)) {
+        } elseif (! is_array($ids)) {
             $ids = [$ids];
         }
 
@@ -572,7 +583,8 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
         // Let's fetch the existing edges first.
         $edges = $this->edges();
         // Collect the current related models IDs out of related models.
-        $current = array_map(function (Edge $edge) { return $edge->getRelated()->getKey(); }, $edges->toArray());
+        $current = array_map(function (Edge $edge) {
+            return $edge->getRelated()->getKey(); }, $edges->toArray());
 
         $records = $this->formatSyncList($ids);
 
@@ -613,7 +625,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
             // If the ID is not in the list of existing pivot IDs, we will insert a new pivot
             // record, otherwise, we will just update this existing record on this joining
             // table, so that the developers will easily update these records pain free.
-            if (!in_array($id, $current)) {
+            if (! in_array($id, $current)) {
                 $this->attach($id, $attributes, $touch);
 
                 $changes['attached'][] = (int) $id;
@@ -671,7 +683,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
         $results = array();
 
         foreach ($records as $id => $attributes) {
-            if (!is_array($attributes)) {
+            if (! is_array($attributes)) {
                 list($id, $attributes) = array($attributes, array());
             }
 
@@ -701,7 +713,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      * @param mixed $id
      * @param array $columns
      *
-     * @return \Illuminate\Support\Collection|\Illuminate\Database\Eloquent\Model
+     * @return \Illuminate\Support\Collection|Model
      */
     public function findOrNew($id, $columns = ['*'])
     {
@@ -719,7 +731,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      *
      * @param array $attributes
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function firstOrNew(array $attributes)
     {
@@ -737,7 +749,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      *
      * @param array $attributes
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function firstOrCreate(array $attributes)
     {
@@ -754,7 +766,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      * @param array $attributes
      * @param array $values
      *
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return Model
      */
     public function updateOrCreate(array $attributes, array $values = [])
     {
@@ -792,7 +804,7 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      *
      * @param array $ids
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function modelsFromIds($ids)
     {
@@ -812,12 +824,12 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      */
     public function isArrayOfModels($models)
     {
-        if (!is_array($models)) {
+        if (! is_array($models)) {
             return false;
         }
 
         $notModels = array_filter($models, function ($model) {
-            return !$model instanceof Model;
+            return ! $model instanceof Model;
         });
 
         return empty($notModels);
@@ -860,12 +872,12 @@ abstract class HasOneOrMany extends Relation implements RelationInterface
      */
     public function getQualifiedParentKeyName()
     {
-        return $this->parent->getTable().'.'.$this->localKey;
+        return $this->parent->getTable() . '.' . $this->localKey;
     }
     /**
      * Get a new Finder instance.
      *
-     * @return \Vinelab\NeoEloquent\Eloquent\Edges\Finder
+     * @return Finder
      */
     public function newFinder()
     {
